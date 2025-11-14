@@ -51,7 +51,7 @@ impl EntityTemplates {
                     Some(&entry_path),
                     duplicates_possible,
                 )?;
-            } else if path.is_file() {
+            } else if entry_path.is_file() {
                 if path.extension() != Some("ron".as_ref()) {
                     bail!(
                         "Found non-.ron file inside the entity_templates directory ({}) at location {} inside the directory {}.",
