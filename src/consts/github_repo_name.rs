@@ -1,1 +1,1 @@
-pub const GITHUB_REPO_NAME: &str = "TEMP_TESTosdfgbfdps";
+pub const GITHUB_REPO_NAME: &str = "Spalst";
