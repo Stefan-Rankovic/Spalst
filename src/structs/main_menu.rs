@@ -41,13 +41,13 @@ impl MainMenu {
     ///     structs::MainMenu,
     /// };
     ///
-    /// let main_menu: MainMenu = MainMenu::from(MainMenuEnum::Browsing);
+    /// let mut main_menu: MainMenu = MainMenu::from(MainMenuEnum::Browsing);
     ///
-    /// assert_eq!(main_menu.current(), MainMenuEnum::Browsing);
+    /// assert_eq!(*main_menu.current(), MainMenuEnum::Browsing);
     ///
     /// main_menu.set(MainMenuEnum::Settings);
     ///
-    /// assert_eq!(main_menu.current(), MainMenuEnum::Settings);
+    /// assert_eq!(*main_menu.current(), MainMenuEnum::Settings);
     /// ```
     pub fn current(&self) -> &MainMenuEnum {
         &self.current
@@ -56,14 +56,15 @@ impl MainMenu {
     ///
     /// # Examples
     /// ```
+    /// # use assert_matches::assert_matches;
     /// use spalst::{
     ///     enums::MainMenuEnum,
     ///     structs::MainMenu,
     /// };
     ///
-    /// let main_menu: MainMenu = MainMenu::from(MainMenuEnum::Browsing);
+    /// let mut main_menu: MainMenu = MainMenu::from(MainMenuEnum::Browsing);
     ///
-    /// assert_eq!(main_menu.selected(), Some(MainMenuEnum::CreatePlaythrough));
+    /// assert_matches!(main_menu.selected(), Some(MainMenuEnum::CreatePlaythrough { .. }));
     ///
     /// main_menu.set(MainMenuEnum::Settings);
     ///
@@ -77,17 +78,18 @@ impl MainMenu {
     ///
     /// # Examples
     /// ```
+    /// # use assert_matches::assert_matches;
     /// use spalst::{
     ///     enums::MainMenuEnum,
     ///     structs::MainMenu,
     /// };
     ///
-    /// let main_menu: MainMenu = MainMenu::from(MainMenuEnum::Quit);
+    /// let mut main_menu: MainMenu = MainMenu::from(MainMenuEnum::Quit);
     ///
     /// main_menu.browse();
     ///
-    /// assert_eq!(main_menu.current(), MainMenuEnum::Browsing);
-    /// assert_eq!(main_menu.selected(), Some(MainMenuEnum::CreatePlaythrough));
+    /// assert_eq!(*main_menu.current(), MainMenuEnum::Browsing);
+    /// assert_matches!(main_menu.selected(), Some(MainMenuEnum::CreatePlaythrough { .. }));
     /// ```
     pub fn browse(&mut self) {
         self.current = MainMenuEnum::Browsing;
@@ -103,20 +105,21 @@ impl MainMenu {
     ///
     /// # Examples
     /// ```
+    /// # use assert_matches::assert_matches;
     /// use spalst::{
     ///     enums::MainMenuEnum,
     ///     structs::MainMenu,
     /// };
     ///
-    /// let main_menu: MainMenu = MainMenu::default();
+    /// let mut main_menu: MainMenu = MainMenu::default();
     /// main_menu.set(MainMenuEnum::Quit);
     ///
-    /// assert_eq!(main_menu.current(), MainMenuEnum::Quit);
+    /// assert_eq!(*main_menu.current(), MainMenuEnum::Quit);
     ///
     /// main_menu.set(MainMenuEnum::Browsing); // This will also run warn!()
     ///
-    /// assert_eq(main_menu.current(), MainMenuEnum::Browsing);
-    /// assert_eq(main_menu.selected(), Some(MainMenuEnum::CurrentPlaythrough));
+    /// assert_eq!(*main_menu.current(), MainMenuEnum::Browsing);
+    /// assert_matches!(main_menu.selected(), Some(MainMenuEnum::CreatePlaythrough { .. }));
     /// ```
     pub fn set(&mut self, to: MainMenuEnum) {
         if to == MainMenuEnum::Browsing {
@@ -138,27 +141,28 @@ impl MainMenu {
     ///
     /// # Examples
     /// ```
+    /// # use assert_matches::assert_matches;
     /// use spalst::{
     ///     enums::{MainMenuEnum, Select},
     ///     structs::MainMenu
     /// };
     ///
-    /// let main_menu: MainMenu = MainMenu::default();
-    /// #assert_eq(main_menu.selected(), Some(MainMenuEnum::CreatePlaythrough));
+    /// let mut main_menu: MainMenu = MainMenu::default();
+    /// # assert_matches!(main_menu.selected(), Some(MainMenuEnum::CreatePlaythrough { .. }));
     ///
     /// main_menu.select(Select::Next);
-    /// assert_eq!(main_menu.selected(), Some(MainMenuEnum::LoadPlaythrough));
+    /// assert_eq!(main_menu.selected(), Some(MainMenuEnum::LoadPlaythrough).as_ref());
     /// main_menu.select(Select::Next);
-    /// assert_eq!(main_menu.selected(), Some(MainMenuEnum::Achievements));
+    /// assert_eq!(main_menu.selected(), Some(MainMenuEnum::Achievements).as_ref());
     /// main_menu.select(Select::Next);
     /// main_menu.select(Select::Next);
     /// main_menu.select(Select::Previous);
-    /// assert_eq!(main_menu.selected(), Some(MainMenuEnum::Settings));
+    /// assert_eq!(main_menu.selected(), Some(MainMenuEnum::Settings).as_ref());
     /// main_menu.select(Select::Next);
     /// main_menu.select(Select::Next);
-    /// assert_eq!(main_menu.selected(), Some(MainMenuEnum::CreatePlaythrough));
+    /// assert_matches!(main_menu.selected(), Some(MainMenuEnum::CreatePlaythrough { .. }));
     /// main_menu.select(Select::Previous);
-    /// assert_eq!(main_menu.selected(), Some(MainMenuEnum::Quit));
+    /// assert_eq!(main_menu.selected(), Some(MainMenuEnum::Quit).as_ref());
     /// ```
     pub fn select(&mut self, select: Select) -> Result<()> {
         let Some(ref mut selected) = self.selected else {
@@ -170,12 +174,19 @@ impl MainMenu {
         let variants: Vec<MainMenuEnum> = MainMenuEnum::iter()
             .filter(|variant| *variant != MainMenuEnum::Browsing)
             .collect();
-        let current_index = variants
+        let current_index: usize = variants
             .iter()
             .position(|variant| std::mem::discriminant(variant) == std::mem::discriminant(selected))
             .unwrap();
         match select {
-            Select::Previous => *selected = variants[(current_index - 1) % variants.len()].clone(),
+            Select::Previous => {
+                // Get the specific index of variants, clone it, and set selected to it. The index
+                // is gotten by getting the current index, adding the length and then subtracting 1
+                // (adding the length ensures that even if current_index is 0, subtracting 1 won't
+                // trigger an overflow. And then from that number, the remainder of dividing by
+                // variants.len() is gotten, which is the index needed.
+                *selected = variants[(current_index + variants.len() - 1) % variants.len()].clone()
+            }
             Select::Next => *selected = variants[(current_index + 1) % variants.len()].clone(),
         };
         // Ok.

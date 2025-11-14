@@ -20,3 +20,4 @@ futures = "0.3.31"
 chrono = { version = "0.4.42", features = ["serde"] }
 log = "0.4.28"
 simplelog = "0.12.2"
+assert_matches = "1.5.0"
