@@ -1,7 +1,6 @@
 /// SPDX-License-Identifier: GPL-3.0-only
 pub mod consts;
 pub mod enums;
-pub mod renew_account;
 pub mod structs;
 pub mod traits;
 pub mod update;

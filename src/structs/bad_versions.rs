@@ -8,7 +8,7 @@ pub struct BadVersions(Vec<(Version, BadVersionReason)>);
 impl BadVersions {
     /// Fetches the bad version from the GitHub repository.
     /// Automatically calls `self.check()` if the `releases` argument was passed.
-    pub fn fetch(releases: Option<&Releases>) -> Result<Self> {
+    pub async fn fetch(releases: Option<&Releases>) -> Result<Self> {
         todo!()
     }
     /// Checks if the passed version is one of the bad versions, and if it is, returns the reason.
