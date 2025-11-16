@@ -1,4 +1,5 @@
 use crate::{
+    consts::ENTITY_TEMPLATES_PATH,
     enums::{AchievementId, MergePriority},
     structs::EntityTemplates,
     traits::Loadable,
@@ -17,11 +18,11 @@ pub struct Data {
 }
 
 impl Data {
-    pub fn try_new(core_path: &Path) -> Result<Self> {
+    pub fn try_new(game_path: &Path) -> Result<Self> {
         let achievements: Vec<AchievementId> = AchievementId::iter().collect();
         let entity_templates: EntityTemplates = {
             // The path of the directory entity_templates.
-            let entity_templates_path: &Path = &core_path.join("entity_templates");
+            let entity_templates_path: &Path = &game_path.join(ENTITY_TEMPLATES_PATH);
             // The entity templates inside .../entity_templates/core/.
             let mut entity_templates_core: EntityTemplates =
                 EntityTemplates::process_dir(&entity_templates_path.join("core"), None, false)?;

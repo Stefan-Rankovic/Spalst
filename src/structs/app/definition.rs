@@ -1,4 +1,5 @@
 use crate::{
+    consts::SPALST_SAVE_PATH,
     enums::MainMenuEnum,
     structs::{Account, Data, Game, MainMenu},
     traits::{LoadableSafe, Saveable},
@@ -31,7 +32,7 @@ impl App {
             path: path.clone(),
             menu: None,
             exit: false,
-            account: Account::load_safe(&path.join("spalst_save"))
+            account: Account::load_safe(&path.join(SPALST_SAVE_PATH))
                 .wrap_err_with(|| "Tried loading Account.")?,
             data: Data::try_new(&path)?,
             dev: false,

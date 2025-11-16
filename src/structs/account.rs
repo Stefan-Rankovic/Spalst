@@ -1,4 +1,5 @@
 use crate::{
+    consts::ENTITY_TEMPLATES_PATH,
     enums::AchievementId,
     structs::{Playthrough, PlaythroughId, PlaythroughName, Save, SaveId},
     traits::{Loadable, LoadableSafe, Saveable},
@@ -35,7 +36,7 @@ impl Account {
         if !game_path.is_dir() {
             bail!("Game path passed to Account.initialize_game() is not a directory");
         };
-        let entity_templates_path: &Path = &game_path.join("entity_templates");
+        let entity_templates_path: &Path = &game_path.join(ENTITY_TEMPLATES_PATH);
         if !entity_templates_path.try_exists()? {
             create_dir(entity_templates_path)?;
         } else if !entity_templates_path.is_dir() {
