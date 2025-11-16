@@ -108,7 +108,7 @@ pub async fn updater() -> Result<()> {
                 eprintln!("{}", warning_msg);
             };
             // Update to the fixed release
-            fixed_release.update_to()?;
+            fixed_release.update_to().await?;
         } else {
             // If the current version is not a bad version, just outdated.
             eprintln!(
@@ -179,7 +179,8 @@ pub async fn updater() -> Result<()> {
                         releases_from_current
                             .find_with_version(&input)
                             .unwrap()
-                            .update_to()?;
+                            .update_to()
+                            .await?;
                     }
                     // If the input is "n", do nothing.
                     "n" => {}
