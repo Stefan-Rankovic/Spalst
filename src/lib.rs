@@ -9,7 +9,11 @@ pub mod utils;
 #[macro_use]
 extern crate log;
 
-use crate::{enums::LevelFilterWrapper, structs::App};
+use crate::{
+    enums::LevelFilterWrapper,
+    structs::{App, EnsureTerminalRestore},
+    update::updater,
+};
 use chrono::{
     Local, Utc,
     format::{DelayedFormat, StrftimeItems},
@@ -58,7 +62,7 @@ pub fn set_up_logging(logs_path: &Path, log_level: LevelFilterWrapper) -> Result
     Ok(())
 }
 
-pub async fn run(terminal: Terminal<CrosstermBackend<Stdout>>) -> Result<()> {
+pub async fn run() -> Result<()> {
     // Get the arguments
     let args: ArgsParser = ArgsParser::parse();
     // Define some paths
@@ -82,6 +86,12 @@ pub async fn run(terminal: Terminal<CrosstermBackend<Stdout>>) -> Result<()> {
         }
         info!("Cleaned up all old logs");
     };
+    // Update the program
+    //updater().await?; //todo: comment out when there actuall is a release
+    // Ensure that the terminal is always restored to how it was before the program started
+    let _restore: EnsureTerminalRestore = EnsureTerminalRestore;
+    // Initialize the UI
+    let terminal: Terminal<CrosstermBackend<Stdout>> = ratatui::init();
     // Initialize the App
     let mut app: App = App::try_new()?;
     // Run the App
