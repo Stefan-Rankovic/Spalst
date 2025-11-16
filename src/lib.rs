@@ -87,7 +87,7 @@ pub async fn run() -> Result<()> {
         info!("Cleaned up all old logs");
     };
     // Update the program
-    //updater().await?; //todo: comment out when there actuall is a release
+    //updater().await?; //todo: comment out when there actually is a release
     // Ensure that the terminal is always restored to how it was before the program started
     let _restore: EnsureTerminalRestore = EnsureTerminalRestore;
     // Initialize the UI
