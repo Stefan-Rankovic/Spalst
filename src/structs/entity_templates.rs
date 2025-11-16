@@ -1,5 +1,9 @@
-use crate::{enums::MergePriority, structs::Entity, traits::Loadable};
-use color_eyre::eyre::{Result, bail};
+use crate::{
+    enums::MergePriority,
+    structs::{Entity, EntityTemplateName},
+    traits::Loadable,
+};
+use color_eyre::eyre::{Context, Result, bail};
 use serde::Deserialize;
 use std::{
     collections::HashMap,
@@ -8,12 +12,12 @@ use std::{
 };
 
 #[derive(Debug, Default, Deserialize)]
-pub struct EntityTemplates(HashMap<String, Entity>);
+pub struct EntityTemplates(HashMap<EntityTemplateName, Entity>);
 
 impl Loadable for EntityTemplates {}
 
 impl EntityTemplates {
-    pub fn spawn(&self, template: String) -> Option<Entity> {
+    pub fn spawn(&self, template: EntityTemplateName) -> Option<Entity> {
         self.0.get(&template).cloned()
     }
 
@@ -33,7 +37,6 @@ impl EntityTemplates {
             original_path
         };
         let mut entity_templates: EntityTemplates = EntityTemplates::default();
-        debug!("{}", path.display()); //todo
         for entry in fs::read_dir(path)? {
             let entry = entry?;
             let entry_path = entry.path();
@@ -52,7 +55,7 @@ impl EntityTemplates {
                     duplicates_possible,
                 )?;
             } else if entry_path.is_file() {
-                if path.extension() != Some("ron".as_ref()) {
+                if entry_path.extension() != Some("ron".as_ref()) {
                     bail!(
                         "Found non-.ron file inside the entity_templates directory ({}) at location {} inside the directory {}.",
                         original_path.display(),
@@ -66,7 +69,15 @@ impl EntityTemplates {
                 } else {
                     MergePriority::Unreachable
                 };
-                entity_templates.merge(EntityTemplates::load(&entry_path)?, merge_priority)?;
+                entity_templates.merge(
+                    EntityTemplates::load(&entry_path).wrap_err_with(|| {
+                        format!(
+                            "Tried loading entity templates from path {}.",
+                            entry_path.display()
+                        )
+                    })?,
+                    merge_priority,
+                )?;
             } else {
                 bail!(
                     "Found an element inside the entry_templates directory ({}) at location {} inside the directory {} that is not a file.",
