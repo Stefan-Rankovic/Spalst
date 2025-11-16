@@ -10,7 +10,10 @@ pub mod utils;
 extern crate log;
 
 use crate::{enums::LevelFilterWrapper, structs::App};
-use chrono::{Local, Utc};
+use chrono::{
+    Local, Utc,
+    format::{DelayedFormat, StrftimeItems},
+};
 use clap::Parser;
 use color_eyre::eyre::{Result, bail};
 use log::{LevelFilter, info};
@@ -33,8 +36,9 @@ pub fn set_up_logging(logs_path: &Path, log_level: LevelFilterWrapper) -> Result
         bail!("{} exists but is not a directory.", logs_path.display());
     };
     // Define the current time and log file path
-    let current_time_formatted = Local::now().format("%Y-%m-%d_%H-%M-%S");
-    let current_log_file_path = logs_path.join(format!("{}.log", current_time_formatted));
+    let current_time_formatted: DelayedFormat<StrftimeItems> =
+        Local::now().format("%Y-%m-%d_%H-%M-%S");
+    let current_log_file_path: PathBuf = logs_path.join(format!("{}.log", current_time_formatted));
     // If the current log file path exists, return an error
     if current_log_file_path.try_exists()? {
         bail!(
@@ -42,7 +46,7 @@ pub fn set_up_logging(logs_path: &Path, log_level: LevelFilterWrapper) -> Result
             current_log_file_path.display(),
             logs_path.display(),
         );
-    }
+    };
     // Set up logging
     WriteLogger::init(
         log_level.into(),
@@ -54,7 +58,7 @@ pub fn set_up_logging(logs_path: &Path, log_level: LevelFilterWrapper) -> Result
     Ok(())
 }
 
-pub async fn run() -> Result<()> {
+pub async fn run(terminal: Terminal<CrosstermBackend<Stdout>>) -> Result<()> {
     // Get the arguments
     let args: ArgsParser = ArgsParser::parse();
     // Define some paths
@@ -78,9 +82,7 @@ pub async fn run() -> Result<()> {
         }
         info!("Cleaned up all old logs");
     };
-    // Initialize the UI
-    let terminal: Terminal<CrosstermBackend<Stdout>> = ratatui::init();
-    // Initialize an App
+    // Initialize the App
     let mut app: App = App::try_new()?;
     // Run the App
     app.run(terminal).await?;
