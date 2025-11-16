@@ -1,7 +1,8 @@
 /// SPDX-License-Identifier: GPL-3.0-only
+use serde::Deserialize;
 use std::fmt::{self, Display, Formatter};
 
-#[derive(Debug)]
+#[derive(Debug, Deserialize)]
 pub struct BadVersionReason(String);
 
 impl Display for BadVersionReason {

@@ -15,7 +15,7 @@ use tokio::{
 pub struct Release {
     pub tag_name: String,
     pub body: Option<String>,
-    assets: Vec<Asset>,
+    pub assets: Vec<Asset>,
 }
 
 impl TryFrom<Release> for Version {
