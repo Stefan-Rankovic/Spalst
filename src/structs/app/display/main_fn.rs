@@ -1,3 +1,4 @@
+/// SPDX-License-Identifier: GPL-3.0-only
 use crate::{enums::MainMenuEnum, structs::App, utils::create_block};
 use color_eyre::eyre::Result;
 use ratatui::{

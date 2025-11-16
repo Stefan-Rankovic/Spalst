@@ -1,3 +1,4 @@
+/// SPDX-License-Identifier: GPL-3.0-only
 use crate::{enums::MainMenuEnum, structs::App, utils::create_popup};
 use ratatui::{
     buffer::Buffer,

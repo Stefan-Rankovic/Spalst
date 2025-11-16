@@ -1,3 +1,4 @@
+/// SPDX-License-Identifier: GPL-3.0-only
 use color_eyre::eyre::{Result, bail};
 use std::fmt;
 use tokio::io::{self, AsyncBufReadExt, BufReader};

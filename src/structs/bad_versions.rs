@@ -1,3 +1,4 @@
+/// SPDX-License-Identifier: GPL-3.0-only
 use crate::structs::{BadVersionReason, Releases};
 use color_eyre::eyre::{Result, bail};
 use semver::Version;

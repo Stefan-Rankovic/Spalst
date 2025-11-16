@@ -1,3 +1,4 @@
+/// SPDX-License-Identifier: GPL-3.0-only
 use crate::{traits::Saveable, utils::convert_path};
 use color_eyre::eyre::{Result, bail};
 use serde::{Deserialize, Serialize};

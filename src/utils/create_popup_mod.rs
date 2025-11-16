@@ -1,3 +1,4 @@
+/// SPDX-License-Identifier: GPL-3.0-only
 use crate::utils::create_block;
 use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},

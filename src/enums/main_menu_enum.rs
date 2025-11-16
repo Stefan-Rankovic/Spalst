@@ -1,3 +1,4 @@
+/// SPDX-License-Identifier: GPL-3.0-only
 use color_eyre::eyre::{Result, bail};
 use strum_macros::EnumIter;
 use tokio::time::Instant;

@@ -1,3 +1,4 @@
+/// SPDX-License-Identifier: GPL-3.0-only
 use crate::{
     enums::GameMenu,
     structs::{Entity, EntityId},

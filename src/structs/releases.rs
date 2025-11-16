@@ -1,3 +1,4 @@
+/// SPDX-License-Identifier: GPL-3.0-only
 use crate::{
     consts::{GITHUB_REPO_NAME, GITHUB_REPO_OWNER},
     structs::Release,

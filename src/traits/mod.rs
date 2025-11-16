@@ -1,3 +1,4 @@
+/// SPDX-License-Identifier: GPL-3.0-only
 pub mod loadable;
 pub mod loadable_safe;
 pub mod saveable;

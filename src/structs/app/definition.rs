@@ -1,3 +1,4 @@
+/// SPDX-License-Identifier: GPL-3.0-only
 use crate::{
     consts::SPALST_SAVE_PATH,
     enums::MainMenuEnum,

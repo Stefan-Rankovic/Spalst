@@ -1,3 +1,4 @@
+/// SPDX-License-Identifier: GPL-3.0-only
 use crate::structs::{Item, Stats};
 use serde::{Deserialize, Serialize};
 

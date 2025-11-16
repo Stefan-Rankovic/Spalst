@@ -1,3 +1,4 @@
+/// SPDX-License-Identifier: GPL-3.0-only
 pub mod _wrappers;
 pub mod account;
 pub mod achievement_info;

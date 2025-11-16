@@ -1,3 +1,4 @@
+/// SPDX-License-Identifier: GPL-3.0-only
 use crate::enums::{MainMenuEnum, Select};
 use color_eyre::eyre::{Result, bail};
 use strum::IntoEnumIterator;
