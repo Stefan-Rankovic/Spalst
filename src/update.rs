@@ -27,7 +27,7 @@ pub async fn updater() -> Result<()> {
         eyre!("The repository {GITHUB_REPO_OWNER}/{GITHUB_REPO_NAME} has no releases.")
     })?;
     // Get bad versions
-    let bad_versions: BadVersions = BadVersions::fetch(Some(&releases))?;
+    let bad_versions: BadVersions = BadVersions::fetch(Some(&releases)).await?;
     // If the current version matches the latest...
     if current_release.try_as_version()? == latest_release.try_as_version()? {
         // If the current version is a bad version, ask the user how to proceed
