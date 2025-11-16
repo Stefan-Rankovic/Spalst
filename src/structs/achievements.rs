@@ -1,7 +1,5 @@
-use crate::{
-    enums::AchievementId,
-    structs::AchievementInfo,
-};
+/// SPDX-License-Identifier: GPL-3.0-only
+use crate::{enums::AchievementId, structs::AchievementInfo};
 use std::collections::HashMap;
 use strum::IntoEnumIterator;
 
@@ -12,7 +10,7 @@ impl Default for Achievements {
         let mut achievement_id_and_info: HashMap<AchievementId, AchievementInfo> = HashMap::new();
         for id in AchievementId::iter() {
             achievement_id_and_info.insert(id, AchievementInfo::from_id(id));
-        };
+        }
         Self(achievement_id_and_info)
     }
 }

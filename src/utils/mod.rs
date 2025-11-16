@@ -1,3 +1,4 @@
+/// SPDX-License-Identifier: GPL-3.0-only
 pub mod convert_path_mod;
 pub mod create_block_mod;
 pub mod create_popup_mod;

@@ -2,6 +2,7 @@
 name = "spalst"
 version = "1.0.0"
 edition = "2024"
+license-file = "LICENSE"
 
 [dependencies]
 color-eyre = "0.6.5"

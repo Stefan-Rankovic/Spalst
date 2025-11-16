@@ -1,9 +1,10 @@
+/// SPDX-License-Identifier: GPL-3.0-only
 use crate::enums::{AchievementId, Rarity};
 
 pub struct AchievementInfo {
     name: &'static str,
     description: &'static str,
-    rarity: Rarity
+    rarity: Rarity,
 }
 
 impl AchievementInfo {

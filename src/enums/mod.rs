@@ -1,3 +1,4 @@
+/// SPDX-License-Identifier: GPL-3.0-only
 pub mod achievement_id;
 pub mod game_menu;
 pub mod get_input_mode;

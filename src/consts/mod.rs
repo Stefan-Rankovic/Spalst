@@ -1,3 +1,4 @@
+/// SPDX-License-Identifier: GPL-3.0-only
 pub mod github_repo_name;
 pub mod github_repo_owner;
 pub mod paths;
