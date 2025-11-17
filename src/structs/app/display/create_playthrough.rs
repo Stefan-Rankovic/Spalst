@@ -1,5 +1,7 @@
 /// SPDX-License-Identifier: GPL-3.0-only
-use crate::{enums::MainMenuEnum, structs::App, utils::create_popup};
+use crate::{
+    consts::CREATE_PLAYTHROUGH_WARN_TIME, enums::MainMenuEnum, structs::App, utils::create_popup,
+};
 use ratatui::{
     buffer::Buffer,
     layout::{Alignment, Rect},
@@ -9,7 +11,7 @@ use ratatui::{
 };
 
 impl App {
-    pub fn display_create_playthrough(&mut self, area: Rect, buf: &mut Buffer) {
+    pub fn display_create_playthrough(&self, area: Rect, buf: &mut Buffer) {
         let MainMenuEnum::CreatePlaythrough {
             current_input,
             warning_displayed_on,
@@ -19,14 +21,6 @@ impl App {
         };
         let (paragraph, popup_area): (Paragraph, Rect);
         if let Some(instant) = warning_displayed_on {
-            if instant.elapsed().as_secs_f64() >= 3.0 {
-                let input: String = current_input.to_string();
-                self.menu_mut().set(MainMenuEnum::CreatePlaythrough {
-                    current_input: input,
-                    warning_displayed_on: None,
-                });
-                return;
-            };
             (paragraph, popup_area) = create_popup(
                 area,
                 20,
@@ -38,7 +32,10 @@ impl App {
                     ))
                     .red(),
                     Line::from(""),
-                    Line::from(format!("{:.1}", instant.elapsed().as_secs_f64())),
+                    Line::from(format!(
+                        "{:.1}",
+                        CREATE_PLAYTHROUGH_WARN_TIME - instant.elapsed().as_secs_f64()
+                    )),
                 ],
             );
         } else {

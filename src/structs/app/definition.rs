@@ -1,16 +1,17 @@
 /// SPDX-License-Identifier: GPL-3.0-only
 use crate::{
-    consts::SPALST_SAVE_PATH,
+    consts::{CREATE_PLAYTHROUGH_WARN_TIME, SPALST_SAVE_PATH},
     enums::MainMenuEnum,
     structs::{Account, Data, Game, MainMenu},
     traits::{LoadableSafe, Saveable},
     utils::create_block,
 };
-use color_eyre::eyre::{Context, Result};
+use color_eyre::eyre::{Context, ContextCompat, Result, bail};
 use crossterm::event::EventStream;
 use futures::StreamExt;
 use ratatui::DefaultTerminal;
 use std::{
+    env::{self, VarError},
     path::{Path, PathBuf},
     time::Duration,
 };
@@ -27,16 +28,57 @@ pub struct App {
 }
 
 impl App {
-    pub fn try_new() -> Result<Self> {
-        let path: PathBuf = std::env::current_exe()?.parent().unwrap().to_path_buf();
+    pub async fn try_new() -> Result<Self> {
+        let mut dev: bool = match env::var("CARGO_MANIFEST_PATH") {
+            Ok(_) => true,
+            Err(e) => match e {
+                VarError::NotPresent => false,
+                VarError::NotUnicode(_) => {
+                    warn!(
+                        "The CARGO_MANIFEST_PATH environment variable contains non-unicode data."
+                    );
+                    true
+                }
+            },
+        };
+        let path: PathBuf = {
+            let mut p: PathBuf = std::env::current_exe()?.parent().wrap_err_with(|| "Your executable has no parent directory. Congrats. Now stop being a bumfuzzle and don't torture your env, nor the game.")?.to_path_buf();
+            if dev {
+                if p.ends_with("target/release") {
+                    dev = false;
+                };
+                if p.ends_with("target/debug") || p.ends_with("target/release") {
+                    p = p
+                        .parent()
+                        .wrap_err_with(|| "Your parents of the executable were found to be something and then \"debug\" (or \"release\") and then \"target\" and yet your executable doesn't have the 2nd parent.")?
+                        .parent()
+                        .wrap_err_with(|| "Your parents of the executable were found to be something and then \"debug\" (or \"release\") and then \"target\" and yet your executable doesn't have the 3rd parent.")?
+                        .to_path_buf();
+                } else {
+                    error!(
+                        "Developer mode was set and yet the parent directories aren't \"target/debug\" nor \"target/release\"."
+                    );
+                    bail!(
+                        "You are not a developer yet your CARGO_MANIFEST_PATH environment variable was set. Please unset it and then run the program."
+                    );
+                };
+            };
+            p
+        };
+        let save_path: &Path = &path.join(SPALST_SAVE_PATH);
+        let account = Account::load_safe(save_path);
+        let data = Data::try_new(&path);
+        let (account_result, data_result): (Result<Account>, Result<Data>) =
+            tokio::join!(account, data);
+        let account: Account = account_result.wrap_err_with(|| "Tried loading Account.")?;
+        let data: Data = data_result?;
         Ok(Self {
             path: path.clone(),
             menu: None,
             exit: false,
-            account: Account::load_safe(&path.join(SPALST_SAVE_PATH))
-                .wrap_err_with(|| "Tried loading Account.")?,
-            data: Data::try_new(&path)?,
-            dev: false,
+            account,
+            data,
+            dev,
         })
     }
 }
@@ -71,26 +113,44 @@ impl App {
         self.account.initialize_game(&self.path)?;
         // Display the main menu
         self.menu = Some(MainMenu::from(MainMenuEnum::Browsing));
-        self.display(&mut terminal)?;
-        while self.menu.is_some() {
-            // Uncomment the following line if, in the future, there exists an async task that can
-            // change the value of self.menu. Currently, self.menu can only ever change from inside
-            // this while loop, but in the case where it can change from other causes (such as an
-            // async task changing it), rx.recv().await would block this thread until an event is
-            // received, and the while loop condition won't get checked. So even though self.menu
-            // isn't Menu::ChoosingSave, the loop will still run. Until an event, of course. That
-            // can be prevented by timeouting every 100ms, which basically means the while loop
-            // gets to check its condition every 100ms to see if self.menu magically changed.
-            //if let Ok(Some(event)) = tokio::time::timeout(Duration::from_millis(100), rx.recv()).await {
-            if let Some(event) = rx.recv().await {
-                self.handle_event(event, &mut terminal)?;
-                // Refresh the terminal
-                self.display(&mut terminal)?;
-                // Check if the program should quit
-                if *self.menu().current() == MainMenuEnum::Quit {
+        while let Some(menu) = self.menu.as_ref() {
+            // Refresh the terminal
+            self.display(&mut terminal)?;
+            // Do some things based on self.menu.current().
+            match menu.current() {
+                MainMenuEnum::CreatePlaythrough {
+                    current_input,
+                    warning_displayed_on,
+                } => {
+                    if let Some(instant) = warning_displayed_on
+                        && instant.elapsed().as_secs_f64() >= CREATE_PLAYTHROUGH_WARN_TIME
+                    {
+                        let current_input: String = current_input.to_string();
+                        self.menu_mut().set_same(MainMenuEnum::CreatePlaythrough {
+                            current_input,
+                            warning_displayed_on: None,
+                        })?;
+                    };
+                }
+                MainMenuEnum::Quit => {
+                    // Save.
                     self.account.save(&self.path.join("spalst_save"))?;
+                    // Ok.
                     return Ok(());
-                };
+                }
+                _ => {}
+            };
+            // Handle events at the end because that's the only thing that takes a mutable
+            // reference to self and doesn't use the variable menu, and the mutable reference and
+            // immutable reference can't exist at the same time.
+            if let Ok(Some(event)) = timeout(
+                Duration::from_millis((1000u16 / self.account.fps()).into()),
+                rx.recv(),
+            )
+            .await
+            {
+                // Handle events
+                self.handle_event(event, &mut terminal)?;
             };
         }
 

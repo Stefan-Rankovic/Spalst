@@ -93,7 +93,7 @@ pub async fn run() -> Result<()> {
     // Initialize the UI
     let terminal: Terminal<CrosstermBackend<Stdout>> = ratatui::init();
     // Initialize the App
-    let mut app: App = App::try_new()?;
+    let mut app: App = App::try_new().await?;
     // Run the App
     app.run(terminal).await?;
     // Ok.

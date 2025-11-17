@@ -1,6 +1,7 @@
 /// SPDX-License-Identifier: GPL-3.0-only
 use crate::enums::{MainMenuEnum, Select};
-use color_eyre::eyre::{Result, bail};
+use color_eyre::eyre::{OptionExt, Result, bail};
+use std::mem::discriminant;
 use strum::IntoEnumIterator;
 
 #[derive(Debug, Eq, PartialEq)]
@@ -9,19 +10,10 @@ pub struct MainMenu {
     selected: Option<MainMenuEnum>,
 }
 
-impl Default for MainMenu {
-    fn default() -> Self {
-        Self {
-            current: MainMenuEnum::Browsing,
-            selected: Some(MainMenuEnum::first()),
-        }
-    }
-}
-
 impl From<MainMenuEnum> for MainMenu {
     fn from(enum_variant: MainMenuEnum) -> MainMenu {
         let selected: Option<MainMenuEnum> = if enum_variant == MainMenuEnum::Browsing {
-            Some(MainMenuEnum::first())
+            Some(MainMenuEnum::selected_default())
         } else {
             None
         };
@@ -33,7 +25,7 @@ impl From<MainMenuEnum> for MainMenu {
 }
 
 impl MainMenu {
-    /// Returns the current value of self.current.
+    /// Returns the value of `self.current`.
     ///
     /// # Examples
     /// ```
@@ -53,7 +45,7 @@ impl MainMenu {
     pub fn current(&self) -> &MainMenuEnum {
         &self.current
     }
-    /// Returns the current value of self.selected.
+    /// Returns the value of `self.selected`.
     ///
     /// # Examples
     /// ```
@@ -75,7 +67,7 @@ impl MainMenu {
         self.selected.as_ref()
     }
 
-    /// Sets self.current to MainMenuEnum::Browsing and self.selected to Some(MainMenuEnum::first()).
+    /// Sets `self.current` to `MainMenuEnum::Browsing` and `self.selected` to `Some(MainMenuEnum::selected_default())`.
     ///
     /// # Examples
     /// ```
@@ -94,7 +86,7 @@ impl MainMenu {
     /// ```
     pub fn browse(&mut self) {
         self.current = MainMenuEnum::Browsing;
-        self.selected = Some(MainMenuEnum::first());
+        self.selected = Some(MainMenuEnum::selected_default());
     }
     /// Calls `self.browse()` and then returns `self`.
     /// It's important to understand that this returns `&mut MainMenu` and NOT `MainMenu`, and, as
@@ -130,8 +122,13 @@ impl MainMenu {
         self.browse();
         self
     }
-    /// Sets self.current to another value. If the passed value is MainMenuEnum::Browsing, the
-    /// program will run warn!(...), and then just call self.browse().
+    /// Sets `self.current` to another value. If the passed value is `MainMenuEnum::Browsing`, the
+    /// program will run `warn!(...)` (beacuse, just call `self.browse()` instead), and then call
+    /// `self.browse()`.
+    ///
+    /// If `to` is the same variant of the enum `MainMenuEnum` as `self.current`, the function will
+    /// run `warn!(...)` (because `self.set_same()` should've been called instead) and then call
+    /// `self.set_same()`.
     ///
     /// # Examples
     /// ```
@@ -158,16 +155,64 @@ impl MainMenu {
                 MainMenuEnum::Browsing.as_str_debug()
             );
             self.browse()
+        } else if discriminant(&to) == discriminant(&self.current) {
+            warn!(
+                "Called function MainMenu::set() with the argument {:#?}, which is the same variant as the current value, {:#?}. It should always be preferred to call MainMenu::set_same() instead.",
+                to, self.current,
+            );
+            self.set_same(to)
+                .expect("Only condition for fail checked 2 lines above.");
         } else {
             self.selected = None;
             self.current = to;
         };
     }
 
-    /// Selects the previous or next item (changes `self.selected`).
+    /// Changes `self.current` but with the guarantee that the new `self.current` will have the
+    /// same variant as the old one.
     ///
     /// # Errors
-    /// An error will only be returned if `self.selected` is None.
+    /// Can only fail if `to` isn't the same variant as `self.current`.
+    pub fn set_same(&mut self, to: MainMenuEnum) -> Result<()> {
+        if discriminant(&self.current) != discriminant(&to) {
+            bail!(
+                "Can only call MainMenu::set_same() when the variants of self.current and the argument passed are the same."
+            );
+        };
+        self.current = to;
+        Ok(())
+    }
+
+    /// Changes `self.selected` but with the guarantee that the new `self.selected` will have the
+    /// same variant as the old one.
+    pub fn select_same(&mut self, to: MainMenuEnum) -> Result<()> {
+        let Some(ref mut selected) = self.selected else {
+            bail!(
+                "Can only call MainMenu::select when self.selected is Some and self.current is {}.",
+                MainMenuEnum::Browsing.as_str_debug()
+            );
+        };
+        if discriminant(selected) != discriminant(&to) {
+            bail!(
+                "Can only call MainMenu::select_same() when the variants of self.selected and the argument passed are the same."
+            );
+        } else {
+            *selected = to;
+        };
+        // Ok.
+        Ok(())
+    }
+
+    /// Changes `self.selected` according to the value of `select`.
+    ///
+    /// If `select` is `Select::Direct(value)` and `value` is the same variant of MainMenuEnum as
+    /// `self.selected`, the function will run `warn!(...)` (beacuse `self.select_same()` should've
+    /// been called instead) and then call `self.select_same()`.
+    ///
+    /// # Errors
+    /// An error will be returned if any of these are true:
+    ///     - `self.selected` is `None`.
+    ///     - `select` is `Select::Direct(MainMenuEnum::Browsing)`
     ///
     /// # Examples
     /// ```
@@ -182,17 +227,22 @@ impl MainMenu {
     ///
     /// main_menu.select(Select::Next);
     /// assert_eq!(main_menu.selected(), Some(MainMenuEnum::LoadPlaythrough).as_ref());
+    ///
     /// main_menu.select(Select::Next);
-    /// assert_eq!(main_menu.selected(), Some(MainMenuEnum::Achievements).as_ref());
     /// main_menu.select(Select::Next);
     /// main_menu.select(Select::Next);
     /// main_menu.select(Select::Previous);
     /// assert_eq!(main_menu.selected(), Some(MainMenuEnum::Settings).as_ref());
+    ///
     /// main_menu.select(Select::Next);
     /// main_menu.select(Select::Next);
     /// assert_matches!(main_menu.selected(), Some(MainMenuEnum::CreatePlaythrough { .. }));
+    ///
     /// main_menu.select(Select::Previous);
     /// assert_eq!(main_menu.selected(), Some(MainMenuEnum::Quit).as_ref());
+    ///
+    /// main_menu.select(Select::Direct(MainMenuEnum::LoadPlaythrough));
+    /// assert_eq!(main_menu.selected(), Some(MainMenuEnum::LoadPlaythrough).as_ref());
     /// ```
     pub fn select(&mut self, select: Select) -> Result<()> {
         let Some(ref mut selected) = self.selected else {
@@ -200,6 +250,24 @@ impl MainMenu {
                 "Can only call MainMenu::select when self.selected is Some and self.current is {}.",
                 MainMenuEnum::Browsing.as_str_debug()
             );
+        };
+
+        if let Select::Direct(to_select) = select {
+            if to_select == MainMenuEnum::Browsing {
+                bail!("Tried to select MainMenuEnum::Browsing.");
+            };
+            if discriminant(&to_select) == discriminant(selected) {
+                warn!(
+                    "Called function MainMenu::select() with the argument {:#?}, which is the same variant as the current value, {:#?}. It should always be preferred to call MainMenu::select_same() instead.",
+                    to_select, selected,
+                );
+                self.select_same(to_select)?;
+                // Ok.
+                return Ok(());
+            };
+            *selected = to_select;
+            // Ok.
+            return Ok(());
         };
         let variants: Vec<MainMenuEnum> = MainMenuEnum::iter()
             .filter(|variant| *variant != MainMenuEnum::Browsing)
@@ -218,6 +286,7 @@ impl MainMenu {
                 *selected = variants[(current_index + variants.len() - 1) % variants.len()].clone()
             }
             Select::Next => *selected = variants[(current_index + 1) % variants.len()].clone(),
+            Select::Direct(_) => unreachable!(),
         };
         // Ok.
         Ok(())

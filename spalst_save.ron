@@ -1,0 +1,7 @@
+(
+    game_initialized: false,
+    playthroughs: {},
+    next_save_id: (0),
+    achievements: [],
+    fps: 60,
+)
