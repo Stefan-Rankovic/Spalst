@@ -1,5 +1,6 @@
 /// SPDX-License-Identifier: GPL-3.0-only
 use ratatui::{
+    layout::Alignment,
     style::Stylize,
     symbols::border,
     text::Line,
@@ -29,6 +30,8 @@ where
         };
         // Add the title to the block.
         block = block.title(t);
+        // Center the title
+        block = block.title_alignment(Alignment::Center);
     };
     // Return the block
     block
