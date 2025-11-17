@@ -257,7 +257,7 @@ pub async fn updater() -> Result<()> {
                                     );
                                 };
                                 // Print the newline
-                                print!("\n");
+                                println!();
                             };
                             // Print 10 newlines as a separator between multiple release notes
                             print!("\n\n\n\n\n");
@@ -287,7 +287,6 @@ pub async fn updater() -> Result<()> {
                 };
                 break;
             }
-            todo!()
         };
     };
     // Ok.

@@ -3,7 +3,7 @@ use crate::enums::{MainMenuEnum, Select};
 use color_eyre::eyre::{Result, bail};
 use strum::IntoEnumIterator;
 
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq)]
 pub struct MainMenu {
     current: MainMenuEnum,
     selected: Option<MainMenuEnum>,
@@ -96,7 +96,36 @@ impl MainMenu {
         self.current = MainMenuEnum::Browsing;
         self.selected = Some(MainMenuEnum::first());
     }
-    /// todo
+    /// Calls `self.browse()` and then returns `self`.
+    /// It's important to understand that this returns `&mut MainMenu` and NOT `MainMenu`, and, as
+    /// such, modifies the original value instead of consuming it.
+    ///
+    /// # Examples
+    /// ```
+    /// # use assert_matches::assert_matches;
+    /// use spalst::{
+    ///     enums::MainMenuEnum,
+    ///     structs::MainMenu,
+    /// };
+    ///
+    /// let mut main_menu: MainMenu = MainMenu::from(MainMenuEnum::Settings);
+    ///
+    /// if let Some(MainMenuEnum::CreatePlaythrough {
+    ///     current_input,
+    ///     warning_displayed_on,
+    /// }) = main_menu.browsing().selected() {
+    ///     // Do something
+    /// };
+    ///
+    /// assert_matches!(main_menu.selected(), Some(MainMenuEnum::CreatePlaythrough { .. }));
+    /// assert_eq!(*main_menu.current(), MainMenuEnum::Browsing);
+    ///
+    /// let mut main_menu_other: MainMenu = MainMenu::from(MainMenuEnum::LoadPlaythrough);
+    ///
+    /// main_menu_other.browse();
+    ///
+    /// # assert_eq!(main_menu, main_menu_other);
+    /// ```
     pub fn browsing(&mut self) -> &mut Self {
         self.browse();
         self
