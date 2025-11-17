@@ -138,7 +138,7 @@ impl MainMenu {
     ///     structs::MainMenu,
     /// };
     ///
-    /// let mut main_menu: MainMenu = MainMenu::default();
+    /// let mut main_menu: MainMenu = MainMenu::from(MainMenuEnum::LoadPlaythrough);
     /// main_menu.set(MainMenuEnum::Quit);
     ///
     /// assert_eq!(*main_menu.current(), MainMenuEnum::Quit);
@@ -222,13 +222,12 @@ impl MainMenu {
     ///     structs::MainMenu
     /// };
     ///
-    /// let mut main_menu: MainMenu = MainMenu::default();
-    /// # assert_matches!(main_menu.selected(), Some(MainMenuEnum::CreatePlaythrough { .. }));
+    /// let mut main_menu: MainMenu = MainMenu::from(MainMenuEnum::Browsing);
     ///
     /// main_menu.select(Select::Next);
-    /// assert_eq!(main_menu.selected(), Some(MainMenuEnum::LoadPlaythrough).as_ref());
-    ///
     /// main_menu.select(Select::Next);
+    /// assert_eq!(main_menu.selected(), Some(MainMenuEnum::Achievements).as_ref());
+    ///
     /// main_menu.select(Select::Next);
     /// main_menu.select(Select::Next);
     /// main_menu.select(Select::Previous);
