@@ -20,7 +20,7 @@ impl Widget for &mut App {
     fn render(self, area: Rect, buf: &mut Buffer) {
         let block: Block = create_block(Some("Spalst"), 1);
         // The current area is not good to work with because it allows the passed function to
-        // modify the Block's lines, title, etc. which isn't indended behaviour. That's fixed by
+        // modify the Block's lines, title, etc., which isn't indended behaviour. That's fixed by
         // creating a new Rect object that only contains the inner parts of the Block and pass that
         // object as the area argument to the rendering functions.
         let inner_area = block.inner(area);
@@ -29,13 +29,13 @@ impl Widget for &mut App {
         // render the block now.
         block.render(area, buf);
         match self.menu().current() {
-            MainMenuEnum::Browsing => unreachable!(),
+            MainMenuEnum::Browsing => self.display_browsing(inner_area, buf),
             MainMenuEnum::CreatePlaythrough { .. } => {
                 self.display_create_playthrough(inner_area, buf)
             }
-            MainMenuEnum::LoadPlaythrough => self.display_create_playthrough(inner_area, buf),
-            MainMenuEnum::Achievements => self.display_create_playthrough(inner_area, buf),
-            MainMenuEnum::Settings => self.display_create_playthrough(inner_area, buf),
+            MainMenuEnum::LoadPlaythrough => self.display_load_playthrough(inner_area, buf),
+            MainMenuEnum::Achievements => self.display_achievements(inner_area, buf),
+            MainMenuEnum::Settings => self.display_settings(inner_area, buf),
             MainMenuEnum::Quit => {}
         }
     }

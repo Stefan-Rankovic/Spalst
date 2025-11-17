@@ -10,7 +10,7 @@ impl App {
             return Ok(());
         };
         match self.menu().current() {
-            MainMenuEnum::Browsing => unreachable!(),
+            MainMenuEnum::Browsing => self.browsing_handle_event(event),
             MainMenuEnum::CreatePlaythrough { .. } => self.create_playthrough_handle_event(event),
             MainMenuEnum::LoadPlaythrough => self.load_playthrough_handle_event(event),
             MainMenuEnum::Achievements => self.achievements_handle_event(event),
