@@ -4,6 +4,7 @@ use crate::{
     structs::{Entity, EntityTemplateName},
     traits::Loadable,
 };
+use async_recursion::async_recursion;
 use color_eyre::eyre::{Context, Result, bail};
 use serde::Deserialize;
 use std::{
@@ -27,7 +28,8 @@ impl EntityTemplates {
     /// The argument `duplicates_possible` should be `true` if duplicates are possible, and if the
     /// program encounters a duplilcate, it will return an Err. If it is set to `false` and the
     /// program encounters a duplicate, `unreachable!()` will be called.
-    pub fn process_dir(
+    #[async_recursion]
+    pub async fn process_dir(
         original_path: &Path,
         path_to_process: Option<&Path>,
         duplicates_possible: bool,
@@ -50,11 +52,8 @@ impl EntityTemplates {
             };
 
             if entry_path.is_dir() {
-                EntityTemplates::process_dir(
-                    original_path,
-                    Some(&entry_path),
-                    duplicates_possible,
-                )?;
+                EntityTemplates::process_dir(original_path, Some(&entry_path), duplicates_possible)
+                    .await?;
             } else if entry_path.is_file() {
                 if entry_path.extension() != Some("ron".as_ref()) {
                     bail!(
@@ -71,7 +70,7 @@ impl EntityTemplates {
                     MergePriority::Unreachable
                 };
                 entity_templates.merge(
-                    EntityTemplates::load(&entry_path).wrap_err_with(|| {
+                    EntityTemplates::load(&entry_path).await.wrap_err_with(|| {
                         format!(
                             "Tried loading entity templates from path {}.",
                             entry_path.display()

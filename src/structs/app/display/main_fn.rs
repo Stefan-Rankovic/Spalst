@@ -9,14 +9,14 @@ use ratatui::{
 };
 
 impl App {
-    pub fn display(&mut self, terminal: &mut DefaultTerminal) -> Result<()> {
+    pub fn display(&self, terminal: &mut DefaultTerminal) -> Result<()> {
         terminal.draw(|frame| frame.render_widget(self, frame.area()))?;
         // Ok.
         Ok(())
     }
 }
 
-impl Widget for &mut App {
+impl Widget for &App {
     fn render(self, area: Rect, buf: &mut Buffer) {
         let block: Block = create_block(Some("Spalst"), 1);
         // The current area is not good to work with because it allows the passed function to

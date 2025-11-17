@@ -1,5 +1,5 @@
 /// SPDX-License-Identifier: GPL-3.0-only
-use color_eyre::eyre::{Result, bail};
+use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 use tokio::time::Instant;
 
@@ -17,12 +17,20 @@ pub enum MainMenuEnum {
 }
 
 impl MainMenuEnum {
-    pub fn first() -> Self {
-        Self::CreatePlaythrough {
-            current_input: String::new(),
-            warning_displayed_on: None,
-        }
+    pub fn selected_default() -> Self {
+        Self::selected_first()
     }
+    pub fn selected_first() -> Self {
+        Self::iter_no_browsing().next().unwrap()
+    }
+    pub fn selected_last() -> Self {
+        Self::iter_no_browsing().last().unwrap()
+    }
+
+    pub fn iter_no_browsing() -> std::iter::Skip<MainMenuEnumIter> {
+        Self::iter().skip(1)
+    }
+
     pub fn as_str_debug(&self) -> &str {
         match self {
             Self::Browsing => "MainMenuEnum::Browsing",
