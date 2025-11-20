@@ -10,3 +10,4 @@ pub const SPALST_SAVE_PATH: &str = "spalst_save.ron";
 
 // Time
 pub const CREATE_PLAYTHROUGH_WARN_TIME: f64 = 3.5;
+pub const ACHIEVEMENT_DISPLAY_TIME: f64 = 5.0;

@@ -1,8 +1,8 @@
 /// SPDX-License-Identifier: GPL-3.0-only
 pub mod _wrappers;
 pub mod account;
-pub mod achievement_info;
-pub mod achievements;
+pub mod achievement;
+pub mod achievement_queue;
 pub mod app;
 pub mod args_parser;
 pub mod asset;
@@ -24,8 +24,8 @@ pub mod stats;
 
 pub use _wrappers::*;
 pub use account::Account;
-pub use achievement_info::AchievementInfo;
-pub use achievements::Achievements;
+pub use achievement::Achievement;
+pub use achievement_queue::AchievementQueue;
 pub use app::App;
 pub use args_parser::ArgsParser;
 pub use asset::Asset;
