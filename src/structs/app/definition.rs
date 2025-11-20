@@ -1,4 +1,4 @@
-/// SPDX-License-Identifier: GPL-3.0-only
+//! SPDX-License-Identifier: GPL-3.0-only
 use crate::{
     consts::{CREATE_PLAYTHROUGH_WARN_TIME, SPALST_SAVE_PATH},
     enums::{AchievementId, MainMenuEnum},

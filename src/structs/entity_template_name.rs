@@ -1,4 +1,4 @@
-/// SPDX-License-Identifier: GPL-3.0-only
+//! SPDX-License-Identifier: GPL-3.0-only
 use serde::Deserialize;
 use std::fmt::{self, Display, Formatter};
 

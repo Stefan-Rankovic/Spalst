@@ -1,4 +1,4 @@
-/// SPDX-License-Identifier: GPL-3.0-only
+//! SPDX-License-Identifier: GPL-3.0-only
 mod achievements;
 mod browsing;
 mod create_playthrough;
