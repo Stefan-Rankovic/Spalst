@@ -1,8 +1,8 @@
 /// SPDX-License-Identifier: GPL-3.0-only
 use crate::{
     consts::{CREATE_PLAYTHROUGH_WARN_TIME, SPALST_SAVE_PATH},
-    enums::MainMenuEnum,
-    structs::{Account, Data, Game, MainMenu},
+    enums::{AchievementId, MainMenuEnum},
+    structs::{Account, AchievementQueue, Data, Game, MainMenu},
     traits::{LoadableSafe, Saveable},
     utils::create_block,
 };
@@ -20,11 +20,15 @@ use tokio::{sync::mpsc, time::timeout};
 #[derive(Debug)]
 pub struct App {
     path: PathBuf,
-    pub menu: Option<MainMenu>,
+    dev: bool,
+
+    menu: Option<MainMenu>,
+    pub display_achievements_queue: AchievementQueue,
+
     exit: bool,
+
     pub account: Account,
     data: Data,
-    pub dev: bool,
 }
 
 impl App {
@@ -72,9 +76,11 @@ impl App {
             tokio::join!(account, data);
         let account: Account = account_result.wrap_err_with(|| "Tried loading Account.")?;
         let data: Data = data_result?;
+        let display_achievements_queue: AchievementQueue = AchievementQueue::default();
         Ok(Self {
             path: path.clone(),
             menu: None,
+            display_achievements_queue,
             exit: false,
             account,
             data,
@@ -113,9 +119,16 @@ impl App {
         self.account.initialize_game(&self.path)?;
         // Display the main menu
         self.menu = Some(MainMenu::from(MainMenuEnum::Browsing));
+        // Main menu loop
         while let Some(menu) = self.menu.as_ref() {
             // Refresh the terminal
             self.display(&mut terminal)?;
+            // Check if the achievement queue should advance
+            if self.display_achievements_queue.current().is_some()
+                && self.display_achievements_queue.seconds_left()? < 0.0
+            {
+                self.display_achievements_queue.finish_current();
+            };
             // Do some things based on self.menu.current().
             match menu.current() {
                 MainMenuEnum::CreatePlaythrough {
@@ -153,6 +166,10 @@ impl App {
                 self.handle_event(event, &mut terminal)?;
             };
         }
+        self.account.award_achievement(
+            AchievementId::EnterPlaythrough,
+            &mut self.display_achievements_queue,
+        );
 
         // todo: temp
         self.account.save(&self.path.join("spalst_save"))?;

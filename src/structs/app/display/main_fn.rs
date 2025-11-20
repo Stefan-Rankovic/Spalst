@@ -1,10 +1,17 @@
 /// SPDX-License-Identifier: GPL-3.0-only
-use crate::{enums::MainMenuEnum, structs::App, utils::create_block};
+use crate::{
+    consts::ACHIEVEMENT_DISPLAY_TIME,
+    enums::{MainMenuEnum, VerticalAlignment},
+    structs::{Achievement, App},
+    utils::{create_block, create_popup},
+};
 use color_eyre::eyre::Result;
 use ratatui::{
     DefaultTerminal,
     buffer::Buffer,
-    layout::Rect,
+    layout::{Alignment, Rect},
+    style::Stylize,
+    text::Line,
     widgets::{Block, Widget},
 };
 
@@ -28,6 +35,31 @@ impl Widget for &App {
         // rendering functions can't access the actual area where the block should be rendered),
         // render the block now.
         block.render(area, buf);
+        // Display achievements gotten
+        if let Some(achievement) = self.display_achievements_queue.current() {
+            let (paragraph, popup_area) = create_popup(
+                inner_area,
+                VerticalAlignment::Top,
+                Alignment::Right,
+                12,
+                20,
+                Some("Notification"),
+                vec![
+                    Line::from(format!(
+                        "Acquired achievement \"{}\"!",
+                        achievement.name_user()
+                    )),
+                    Line::from(""),
+                    Line::from(format!(
+                        "{:.1}",
+                        self.display_achievements_queue.seconds_left().unwrap(),
+                    )),
+                ],
+            );
+            paragraph
+                .alignment(Alignment::Center)
+                .render(popup_area, buf);
+        }
         match self.menu().current() {
             MainMenuEnum::Browsing => self.display_browsing(inner_area, buf),
             MainMenuEnum::CreatePlaythrough { .. } => {
