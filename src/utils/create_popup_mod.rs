@@ -1,4 +1,4 @@
-/// SPDX-License-Identifier: GPL-3.0-only
+//! SPDX-License-Identifier: GPL-3.0-only
 use crate::{enums::VerticalAlignment, utils::create_block};
 use ratatui::{
     layout::{Alignment, Constraint, Direction, Layout, Rect},

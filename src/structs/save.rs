@@ -1,4 +1,4 @@
-/// SPDX-License-Identifier: GPL-3.0-only
+//! SPDX-License-Identifier: GPL-3.0-only
 use crate::structs::Game;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};

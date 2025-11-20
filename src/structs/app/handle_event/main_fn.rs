@@ -1,4 +1,4 @@
-/// SPDX-License-Identifier: GPL-3.0-only
+//! SPDX-License-Identifier: GPL-3.0-only
 use crate::{enums::MainMenuEnum, structs::App};
 use color_eyre::eyre::Result;
 use ratatui::{DefaultTerminal, crossterm::event::Event};
