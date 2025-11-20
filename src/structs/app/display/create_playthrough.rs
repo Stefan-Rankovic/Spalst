@@ -1,6 +1,9 @@
 /// SPDX-License-Identifier: GPL-3.0-only
 use crate::{
-    consts::CREATE_PLAYTHROUGH_WARN_TIME, enums::MainMenuEnum, structs::App, utils::create_popup,
+    consts::CREATE_PLAYTHROUGH_WARN_TIME,
+    enums::{MainMenuEnum, VerticalAlignment},
+    structs::App,
+    utils::create_popup,
 };
 use ratatui::{
     buffer::Buffer,
@@ -23,6 +26,8 @@ impl App {
         if let Some(instant) = warning_displayed_on {
             (paragraph, popup_area) = create_popup(
                 area,
+                VerticalAlignment::Middle,
+                Alignment::Center,
                 20,
                 50,
                 Some("Warning"),
@@ -41,6 +46,8 @@ impl App {
         } else {
             (paragraph, popup_area) = create_popup(
                 area,
+                VerticalAlignment::Middle,
+                Alignment::Center,
                 15,
                 40,
                 Some("Create Playthrough"),

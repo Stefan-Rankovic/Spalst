@@ -7,6 +7,7 @@ pub mod main_menu_enum;
 pub mod merge_priority;
 pub mod rarity;
 pub mod select;
+pub mod vertical_alignment;
 
 pub use achievement_id::AchievementId;
 pub use game_menu::GameMenu;
@@ -16,3 +17,4 @@ pub use main_menu_enum::MainMenuEnum;
 pub use merge_priority::MergePriority;
 pub use rarity::Rarity;
 pub use select::Select;
+pub use vertical_alignment::VerticalAlignment;

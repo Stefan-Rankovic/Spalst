@@ -1,6 +1,6 @@
 /// SPDX-License-Identifier: GPL-3.0-only
 use crate::{
-    enums::MainMenuEnum,
+    enums::{MainMenuEnum, VerticalAlignment},
     structs::App,
     utils::{create_block, create_popup},
 };
@@ -16,8 +16,15 @@ impl App {
             unreachable!()
         };
         if self.account.playthroughs.is_empty() {
-            let (paragraph, popup_area): (Paragraph, Rect) =
-                create_popup(area, 20, 50, Some("Warning"), "You have no game saves.");
+            let (paragraph, popup_area): (Paragraph, Rect) = create_popup(
+                area,
+                VerticalAlignment::Middle,
+                Alignment::Center,
+                20,
+                50,
+                Some("Warning"),
+                "You have no game saves.",
+            );
             paragraph
                 .alignment(Alignment::Center)
                 .render(popup_area, buf);
