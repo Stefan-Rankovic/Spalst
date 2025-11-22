@@ -1,5 +1,8 @@
 //! SPDX-License-Identifier: GPL-3.0-only
-use crate::{enums::MainMenuEnum, structs::App};
+use crate::{
+    enums::{MainMenuEnum, ManagePlaythroughsMenu},
+    structs::App,
+};
 use color_eyre::eyre::Result;
 use ratatui::{DefaultTerminal, crossterm::event::Event};
 
@@ -12,7 +15,14 @@ impl App {
         match self.menu().current() {
             MainMenuEnum::Browsing => self.browsing_handle_event(event),
             MainMenuEnum::CreatePlaythrough { .. } => self.create_playthrough_handle_event(event),
-            MainMenuEnum::LoadPlaythrough => self.load_playthrough_handle_event(event),
+            MainMenuEnum::ManagePlaythroughs(menu) => match menu {
+                ManagePlaythroughsMenu::Select { .. } => {
+                    self.manage_playthroughs_select_handle_event(event)
+                }
+                ManagePlaythroughsMenu::Playthrough { .. } => {
+                    self.manage_playthroughs_playthrough_handle_event(event)
+                }
+            },
             MainMenuEnum::Achievements => self.achievements_handle_event(event),
             MainMenuEnum::Settings => self.settings_handle_event(event),
             MainMenuEnum::Quit => Ok(()),

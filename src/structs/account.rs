@@ -3,7 +3,8 @@ use crate::{
     consts::ENTITY_TEMPLATES_PATH,
     enums::AchievementId,
     structs::{
-        Achievement, AchievementQueue, Playthrough, PlaythroughId, PlaythroughName, Save, SaveId,
+        Achievement, AchievementQueue, Playthrough, PlaythroughId, PlaythroughName, Playthroughs,
+        Save, SaveId,
     },
     traits::{Loadable, LoadableSafe, Saveable},
     utils::convert_path,
@@ -21,7 +22,7 @@ use tokio::time::Instant;
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Account {
     game_initialized: bool,
-    pub playthroughs: HashMap<PlaythroughName, Playthrough>,
+    pub playthroughs: Playthroughs,
     next_save_id: SaveId,
     achievements: HashSet<Achievement>,
     fps: u16, // may get removed if I don't like it
@@ -32,7 +33,7 @@ impl Default for Account {
         // Remove this if account.fps is also removed
         Self {
             game_initialized: false,
-            playthroughs: HashMap::new(),
+            playthroughs: Playthroughs::default(),
             next_save_id: SaveId(0),
             achievements: HashSet::new(),
             fps: 60,

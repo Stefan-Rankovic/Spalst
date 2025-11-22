@@ -1,7 +1,7 @@
 //! SPDX-License-Identifier: GPL-3.0-only
 use crate::{
     consts::ACHIEVEMENT_DISPLAY_TIME,
-    enums::{MainMenuEnum, VerticalAlignment},
+    enums::{MainMenuEnum, ManagePlaythroughsMenu, VerticalAlignment},
     structs::{Achievement, App},
     utils::{create_block, create_popup},
 };
@@ -65,7 +65,14 @@ impl Widget for &App {
             MainMenuEnum::CreatePlaythrough { .. } => {
                 self.display_create_playthrough(inner_area, buf)
             }
-            MainMenuEnum::LoadPlaythrough => self.display_load_playthrough(inner_area, buf),
+            MainMenuEnum::ManagePlaythroughs(menu) => match menu {
+                ManagePlaythroughsMenu::Select { .. } => {
+                    self.display_manage_playthroughs_select(inner_area, buf)
+                }
+                ManagePlaythroughsMenu::Playthrough { .. } => {
+                    self.display_manage_playthroughs_playthrough(inner_area, buf)
+                }
+            },
             MainMenuEnum::Achievements => self.display_achievements(inner_area, buf),
             MainMenuEnum::Settings => self.display_settings(inner_area, buf),
             MainMenuEnum::Quit => {}
