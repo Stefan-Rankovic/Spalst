@@ -33,8 +33,8 @@ impl App {
                 match key.code {
                     code if DOWN_KEYS.contains(&code) || UP_KEYS.contains(&code) => {
                         let new_selected: PlaythroughName =
-                            self.account.playthroughs.return_select(
-                                &selected_name,
+                            self.account.playthroughs.get_new_playthrough(
+                                selected_name,
                                 if DOWN_KEYS.contains(&code) {
                                     Select::Next
                                 } else {
