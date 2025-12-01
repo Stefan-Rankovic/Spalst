@@ -32,7 +32,14 @@ impl DerefMut for Playthroughs {
 }
 
 impl Playthroughs {
-    pub fn return_select(
+    /// Gets a playthrough based on the one passed and the enum `Select` passed.
+    ///
+    /// # Arguments
+    /// * `initial` - The original playthrough name the function uses as a standpoint.
+    /// * `target` - The `Select` enum that dictates how the element to be returned is chosen.
+    /// * `sort_by` - Because a HashMap is not sorted, this is needed to sort it.
+    /// * `sort_ascending` - Because a HashMap is not sorted, this is needed to sort it.
+    pub fn get_new_playthrough(
         &self,
         initial: &PlaythroughName,
         target: Select<PlaythroughName>,
