@@ -209,54 +209,7 @@ impl MainMenu {
         Ok(())
     }
 
-    /// Changes `self.selected` but with the guarantee that the new `self.selected` will have the
-    /// same variant as the old one.
-    /// Depracated and useless because `self.selected` is now a discriminant, not a variant that
-    /// can have values.
-    ///
-    /// # Errors
-    /// Can only fail if `to` isn't the same variant as `self.selected`.
-    ///
-    /// # Examples
-    /// ```
-    /// use spalst::{
-    ///     enums::{
-    ///         MainMenuEnum, MainMenuEnumDiscriminants,
-    ///         ManagePlaythroughsSelected, PlaythroughsSortBy
-    ///     },
-    ///     structs::MainMenu,
-    /// };
-    /// use strum::IntoDiscriminant;
-    ///
-    /// let mut main_menu: MainMenu = MainMenu::from(MainMenuEnum::Browsing);
-    /// main_menu.set_same(MainMenuEnumDiscriminants::Browsing);
-    /// assert_eq!(main_menu.current().discriminant(), MainMenuEnumDiscriminants::Browsing);
-    /// assert_eq!(main_menu.selected(), Some(MainMenuEnumDiscriminants::CreatePlaythrough));
-    /// ```
-    #[deprecated]
-    pub fn select_same(&mut self, to: MainMenuEnumDiscriminants) -> Result<()> {
-        let Some(ref mut selected) = self.selected else {
-            bail!(
-                "Can only call MainMenu::select when self.selected is Some and self.current is {}.",
-                MainMenuEnumDiscriminants::Browsing.as_str_debug()
-            );
-        };
-        if *selected != to {
-            bail!(
-                "Can only call MainMenu::select_same() when the variants of self.selected and the argument passed are the same."
-            );
-        } else {
-            *selected = to;
-        };
-        // Ok.
-        Ok(())
-    }
-
     /// Changes `self.selected` according to the value of `select`.
-    ///
-    /// If `select` is `Select::Direct(value)` and `value` is the same variant of MainMenuEnum as
-    /// `self.selected`, the function will run `warn!(...)` (beacuse `self.select_same()` should've
-    /// been called instead) and then call `self.select_same()`.
     ///
     /// # Errors
     /// An error will be returned if any of these are true:
@@ -302,15 +255,6 @@ impl MainMenu {
         if let Select::Direct(to_select) = select {
             if to_select == MainMenuEnumDiscriminants::Browsing {
                 bail!("Tried to select MainMenuEnum::Browsing.");
-            };
-            if to_select == *selected {
-                warn!(
-                    "Called function MainMenu::select() with the argument {:#?}, which is the same variant as the current value, {:#?}. It should always be preferred to call MainMenu::select_same() instead.",
-                    to_select, selected,
-                );
-                self.select_same(to_select)?;
-                // Ok.
-                return Ok(());
             };
             *selected = to_select;
             // Ok.
