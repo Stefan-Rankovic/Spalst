@@ -1,0 +1,5 @@
+[build]
+rustflags = ["-Z", "threads=8"]
+
+[target.'cfg(unix)']
+rustflags = ["-C", "link-arg=-fuse-ld=mold"]

@@ -1,45 +1,36 @@
-[workspace]
-members = [
-	"spalst",
-	"spalstatui",
-	"spalst-core",
-]
-resolver = "3"
-
-[workspace.package]
-edition = "2024"
+[package]
+name = "spalst"
 version = "0.0.1"
-repository = "https://github.com/Stefan-Rankovic/Spalst"
 categories = ["command-line-utilities", "games"]
 keywords = ["game", "tui", "terminal"]
+repository = "https://github.com/Stefan-Rankovic/Spalst"
+license-file = "LICENSE"
+edition = "2024"
 description = "TUI menu-based game."
 
 [profile.release]
-opt-level = 3
 overflow-checks = true
-lto = "fat"
-codegen-utils = 1
-
-[workspace.dependencies]
-clap = { version = "4.5.58", features = ["derive"] }
-color-eyre = "0.6.5"
-crossterm = "0.29.0"
-log = "0.4.29"
-ratatui = "0.30.0"
-spalst-core = { path = "spalst-core/" }
-spalstatui = { path = "spalstatui/" }
-tokio = { version = true, features = ["full"] }
-rand = "0.10.0" # todo: temporary
 
 # The code is either good or it isn't. The absurd number of denies is not accidental.
 # Lints that are warn instead of deny are either clearly temporary issues or ones from lints.rust I couldn't bother changing to deny.
+[lints.cargo]
+# Groups
+complexity = { level = "deny", priority = -1 }
+nursery = { level = "deny", priority = -2 }
+pedantic = { level = "deny", priority = -1 }
+perf = { level = "deny", priority = -1 }
+style = { level = "deny", priority = -1 }
+suspicious = { level = "deny", priority = -1 }
+# Restriction
+non_snake_case_features = "deny"
+non_snake_case_packages = "deny"
 [lints.rust]
 # Groups
-unused = { level = "deny", priority = -1 }
-refining_impl_trait = { level = "deny", priority = -1 }
-keyword_idents = { level = "deny", priority = -1 }
-future_incompatible = { level = "deny", priority = -1 }
 deprecated_safe = { level = "deny", priority = -1 }
+future_incompatible = { level = "deny", priority = -1 }
+keyword_idents = { level = "deny", priority = -1 }
+refining_impl_trait = { level = "deny", priority = -1 }
+unused = { level = "deny", priority = -1 }
 # Allow by default
 absolute_paths_not_starting_with_crate = "deny"
 ambiguous_negative_literals = "deny"
@@ -90,13 +81,10 @@ useless_ptr_null_checks = "deny"
 while_true = "deny"
 [lints.clippy]
 # Groups
+all = { level = "deny", priority = -1 }
 cargo = { level = "deny", priority = -1 }
-complexity = { level = "deny", priority = -1 }
 nursery = { level = "deny", priority = -2 }
 pedantic = { level = "deny", priority = -1 }
-perf = { level = "deny", priority = -1 }
-style = { level = "deny", priority = -1 }
-suspicious = { level = "deny", priority = -1 }
 # Restriction
 absolute_paths = "deny"
 alloc_instead_of_core = "deny"
@@ -166,3 +154,25 @@ unused_trait_names = "deny"
 use_debug = "warn"
 verbose_file_reads = "deny"
 wildcard_enum_match_arm = "deny"
+
+[dependencies]
+bytes = "1.11.0"
+chrono = { version = "0.4.42", features = ["serde"] }
+clap = { version = "4.5.50", features = ["derive"] }
+color-eyre = "0.6.5"
+crossterm = { version = "0.29.0", features = ["event-stream"] }
+futures = "0.3.31"
+lasso = { version = "0.7.3", features = ["serialize"] }
+log = "0.4.28"
+ratatui = "0.30.0"
+reqwest = { version = "0.13.1", features = ["json"] }
+ron = "0.12.0"
+semver = { version = "1.0.27", features = ["serde"] }
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.145"
+simplelog = "0.12.2"
+spalstatui = { path = "src/spalstatui" }
+strum = "0.27.2"
+strum_macros = "0.27.2"
+termimad = "0.34.0"
+tokio = { version = "1.47.2", features = ["full"] }

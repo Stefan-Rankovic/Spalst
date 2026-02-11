@@ -1,0 +1,17 @@
+[package]
+version.workspace = true
+repository.workspace = true
+edition.workspace = true
+name = "spalst-core"
+license-file = "../LICENSE.md"
+
+[dependencies]
+clap.workspace = true
+color-eyre.workspace = true
+log.workspace = true
+spalstatui.workspace = true
+tokio.workspace = true
+rand.workspace = true # todo: this should give an error!
+
+[lints]
+workspace = true

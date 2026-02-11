@@ -1,0 +1,38 @@
+//! SPDX-License-Identifier: GPL-3.0-only
+
+use crate::{
+    enums::{MainMenuEnum, ManagePlaythroughsMenu},
+    structs::App,
+};
+use color_eyre::eyre::Result;
+use ratatui::{DefaultTerminal, crossterm::event::Event, prelude::CrosstermBackend};
+use ratatui_async::structs::AsyncTerminal;
+use std::io::Stdout;
+
+impl App {
+    pub async fn handle_event(
+        &mut self,
+        event: Event,
+        terminal: &mut AsyncTerminal<CrosstermBackend<Stdout>>,
+    ) -> Result<()> {
+        if let Event::Resize(..) = event {
+            self.display(terminal).await?;
+            return Ok(());
+        };
+        match self.menu().current() {
+            MainMenuEnum::Browsing => self.browsing_handle_event(event),
+            MainMenuEnum::CreatePlaythrough { .. } => self.create_playthrough_handle_event(event),
+            MainMenuEnum::ManagePlaythroughs(menu) => match menu {
+                ManagePlaythroughsMenu::Select { .. } => {
+                    self.manage_playthroughs_select_handle_event(event)
+                }
+                ManagePlaythroughsMenu::Playthrough { .. } => {
+                    self.manage_playthroughs_playthrough_handle_event(event)
+                }
+            },
+            MainMenuEnum::Achievements => self.achievements_handle_event(event),
+            MainMenuEnum::Settings => self.settings_handle_event(event),
+            MainMenuEnum::Quit => Ok(()),
+        }
+    }
+}
