@@ -2,7 +2,7 @@
 members = [
 	"spalst",
 	"spalstatui",
-	"spalst-core",
+	"spalst_core",
 ]
 resolver = "3"
 
@@ -26,14 +26,25 @@ color-eyre = "0.6.5"
 crossterm = "0.29.0"
 log = "0.4.29"
 ratatui = "0.30.0"
-spalst-core = { path = "spalst-core/" }
+spalst_core = { path = "spalst_core/" }
 spalstatui = { path = "spalstatui/" }
-tokio = { version = true, features = ["full"] }
+tokio = { version = "1.49.0", features = ["full"] }
 rand = "0.10.0" # todo: temporary
 
 # The code is either good or it isn't. The absurd number of denies is not accidental.
 # Lints that are warn instead of deny are either clearly temporary issues or ones from lints.rust I couldn't bother changing to deny.
-[lints.rust]
+[workspace.lints.cargo]
+# Groups
+complexity = { level = "deny", priority = -1 }
+nursery = { level = "deny", priority = -2 }
+pedantic = { level = "deny", priority = -1 }
+perf = { level = "deny", priority = -1 }
+style = { level = "deny", priority = -1 }
+suspicious = { level = "deny", priority = -1 }
+# Restriction
+non_snake_case_features = "deny"
+non_snake_case_packages = "deny"
+[workspace.lints.rust]
 # Groups
 unused = { level = "deny", priority = -1 }
 refining_impl_trait = { level = "deny", priority = -1 }
@@ -88,7 +99,7 @@ unused_associated_type_bounds = "deny"
 unused_comparisons = "deny"
 useless_ptr_null_checks = "deny"
 while_true = "deny"
-[lints.clippy]
+[workspace.lints.clippy]
 # Groups
 cargo = { level = "deny", priority = -1 }
 complexity = { level = "deny", priority = -1 }

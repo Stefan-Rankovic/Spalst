@@ -1,0 +1,4 @@
+#!/bin/sh
+c
+cargo run -Zcargo-lints -- --log-level trace --clean-logs
+bat target/debug/logs*"
