@@ -1,19 +1,10 @@
 //! SPDX-License-Identifier: GPL-3.0-only
 
-use crate::{
-    enums::MenuEvent,
-    structs::MenuElementsSortableList,
-    traits::{AsDisplayable, MenuElement},
-};
-use core::{any::Any, fmt::Debug, pin::Pin};
-use crossterm::event::KeyEvent;
+use crate::{enums::MenuEvent, structs::menu_elements::MenuElementsUpdate, traits::MenuElement};
 use spalstatui::structs::Block;
+use std::{any::Any, pin::Pin};
 
-impl<
-    ItemId: 'static + Copy + Debug + PartialEq + Send + Sync,
-    Item: 'static + AsDisplayable + Debug + PartialEq + Send + Sync,
-> MenuElement for MenuElementsSortableList<ItemId, Item>
-{
+impl MenuElement for MenuElementsUpdate {
     fn selectable(&self) -> bool {
         self.selectable
     }
@@ -31,7 +22,7 @@ impl<
     }
     fn handle_key_event(
         &self,
-        _event: KeyEvent,
+        key_event: crossterm::event::KeyEvent,
     ) -> Pin<Box<dyn Future<Output = MenuEvent> + Send>> {
         Box::pin(async move { todo!() })
     }

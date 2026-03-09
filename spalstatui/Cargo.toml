@@ -1,9 +1,13 @@
 [package]
+edition.workspace = true
+repository.workspace = true
 name = "spalstatui"
 version = "0.30.0"
-repository.workspace = true
 license-file = "../LICENSE.md"
-edition.workspace = true
+description = "Ratatui fork tailored for Spalst."
+keywords = ["tui", "terminal"]
+categories = ["command-line-interface"]
+readme = "./README.md"
 
 [dependencies]
 color-eyre.workspace = true

@@ -5,7 +5,7 @@ use core::{any::Any, pin::Pin};
 use crossterm::event::KeyEvent;
 use ratatui::{
     buffer::Buffer,
-    layout::Rect,
+    layout::{HorizontalAlignment, Rect},
     style::Style,
     widgets::{Paragraph, Widget as _},
 };
@@ -24,25 +24,40 @@ pub struct Raw {
     style: Style,
 
     pub text: String,
+    /// The alignment of the text inside this `MenuElement`.
+    text_alignment: HorizontalAlignment,
 }
 
 impl Raw {
-    pub const fn new(selectable: bool, selected: bool, text: String) -> Self {
+    pub const fn new(
+        selectable: bool,
+        selected: bool,
+        text: String,
+        text_alignment: HorizontalAlignment,
+    ) -> Self {
         Self {
             selectable,
             selected,
             block: None,
             style: Style::new(),
             text,
+            text_alignment,
         }
     }
-    pub const fn styled(selectable: bool, selected: bool, text: String, style: Style) -> Self {
+    pub const fn styled(
+        selectable: bool,
+        selected: bool,
+        text: String,
+        style: Style,
+        text_alignment: HorizontalAlignment,
+    ) -> Self {
         Self {
             selectable,
             selected,
             block: None,
             style,
             text,
+            text_alignment,
         }
     }
 }
@@ -78,7 +93,8 @@ impl WidgetRef for Raw {
         buf: &'future mut Buffer,
     ) -> Pin<Box<dyn Future<Output = ()> + 'future + Send>> {
         Box::pin(async move {
-            let mut paragraph: Paragraph<'_> = Paragraph::new(self.text.as_str());
+            let mut paragraph: Paragraph<'_> =
+                Paragraph::new(self.text.as_str()).alignment(self.text_alignment);
             if let Some(block) = self.block() {
                 paragraph = paragraph.block(block.into());
             }

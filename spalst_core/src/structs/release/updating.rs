@@ -26,6 +26,23 @@ impl Release {
             .find(|asset: &&Asset| -> bool { asset.name.to_lowercase().contains(target) })
     }
 
+    async fn download_executable(&self, asset: &Asset) -> Result<Bytes> {
+        let client: Client = Client::new();
+        let response: Response = client
+            .get(&asset.browser_download_url)
+            .header("User-Agent", "spalst_updater")
+            .send()
+            .await
+            .wrap_err_with(|| "Failed to download new version.")?;
+        let bytes: Bytes = response
+            .bytes()
+            .await
+            .wrap_err_with(|| "Failed to read download response.")?;
+
+        // Ok.
+        Ok(bytes)
+    }
+
     /// Update to this release
     pub async fn update_to(&self) -> Result<()> {
         // Get the current executable path
@@ -42,17 +59,7 @@ impl Release {
         );
         eprintln!("Downloading version {}...", self.version());
         // Download the update
-        let client: Client = Client::new();
-        let response: Response = client
-            .get(&asset.browser_download_url)
-            .header("User-Agent", "spalst_updater")
-            .send()
-            .await
-            .wrap_err_with(|| "Failed to download new version.")?;
-        let bytes: Bytes = response
-            .bytes()
-            .await
-            .wrap_err_with(|| "Failed to read download response")?;
+        let bytes: Bytes = self.download_executable(asset).await?;
         // Log
         info!("Download complete.");
         eprintln!("Download complete.");

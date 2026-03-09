@@ -4,7 +4,7 @@ mod definition;
 mod display_notes;
 #[cfg(target_family = "unix")]
 mod unix_update;
-mod update_to;
+mod updating;
 #[cfg(target_family = "windows")]
 mod windows_update;
 

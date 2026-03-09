@@ -1,8 +1,7 @@
 //! SPDX-License-Identifier: GPL-3.0-only
 
 use crate::traits::{EnumAsStr, MenuElementsSelectedEnum};
-use strum::{EnumDiscriminants, EnumIter};
-use strum_macros::{EnumCount as EnumCountMacro, EnumIs};
+use strum_macros::{EnumCount as EnumCountMacro, EnumDiscriminants, EnumIs, EnumIter};
 
 #[derive(Clone, Copy, Debug, EnumCountMacro, EnumIs, EnumDiscriminants)]
 #[strum_discriminants(derive(EnumIter))]

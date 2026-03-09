@@ -6,7 +6,10 @@ use core::{
 };
 use serde::Deserialize;
 
-#[derive(Clone, Debug, Deserialize, Eq, Ord, PartialEq, PartialOrd)]
+/// The reason for the unsafety of a release.
+///
+/// Wrapper over `String`.
+#[derive(Debug, Deserialize, Eq, Ord, PartialEq, PartialOrd)]
 pub struct ReleaseUnsafetyReason(String);
 
 impl Deref for ReleaseUnsafetyReason {

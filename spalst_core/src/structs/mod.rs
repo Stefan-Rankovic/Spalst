@@ -11,6 +11,7 @@ mod ensure_terminal_restore;
 mod entity;
 mod entity_id;
 mod select_amount;
+mod updater;
 // mod entity_template_name; // todo: delete the file
 // mod entity_templates; // todo: delete the file
 mod game;
@@ -69,3 +70,4 @@ pub use sort_descending::SortDescending;
 pub use sorter::Sorter;
 pub use stats::Stats;
 pub use unsafe_version::UnsafeVersion;
+pub use updater::Updater;

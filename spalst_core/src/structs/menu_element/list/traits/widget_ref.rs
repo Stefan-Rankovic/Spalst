@@ -101,6 +101,7 @@ impl<
                 .try_into()
                 .unwrap_or(horizontal_real_estate);
 
+                #[expect(clippy::integer_division, reason = "Rounding down is fine.")]
                 // Center the item horizontally with an x offset.
                 let x_offset: u16 =
                     items_area.x + (horizontal_real_estate.saturating_sub(current_item_width)) / 2;

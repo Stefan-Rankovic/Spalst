@@ -6,14 +6,15 @@ use semver::Version;
 
 impl Releases {
     /// Returns a new `Vec<&Release>` that contains all releases newer than the passed `Version`.
-    pub fn newer_than<'version, T>(&self, version: T) -> Result<Vec<&Release>>
+    pub fn newer_than<'version, V>(&self, version: V) -> Result<Vec<&Release>>
     where
-        T: TryInto<&'version Version>,
-        T::Error: Into<Report>,
+        V: TryInto<&'version Version>,
+        V::Error: Into<Report>,
     {
-        let ver: &Version = version.try_into().map_err(Into::into)?;
+        let ver: &'version Version = version.try_into().map_err(Into::into)?;
+        // Ok.
         Ok(self
-            .releases
+            .releases()?
             .iter()
             .take_while(|release| *release.version() != *ver)
             .collect())
@@ -25,8 +26,7 @@ impl Releases {
         T::Error: Into<Report>,
     {
         let ver: &Version = version.try_into().map_err(Into::into)?;
-        Ok(self
-            .releases
+        Ok(Vec::<Release>::try_from(self)?
             .into_iter()
             .take_while(|release| *release.version() != *ver)
             .collect::<Vec<_>>() // todo: replace the underscore with a type, regardless of whether this is an error

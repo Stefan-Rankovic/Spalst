@@ -1,9 +1,9 @@
 //! SPDX-License-Identifier: GPL-3.0-only
 
 use crate::{structs::MenuElementsSortableList, traits::AsDisplayable};
+use core::fmt::Debug;
 use ratatui::style::Style;
 use spalstatui::traits::Styled;
-use std::fmt::Debug;
 
 impl<
     ItemId: 'static + Copy + Debug + PartialEq + Send + Sync,

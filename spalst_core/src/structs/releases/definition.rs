@@ -5,77 +5,144 @@ use crate::{
     structs::{RawRelease, Release, UnsafeVersion},
     utils::fetch_unsafe_versions,
 };
-use color_eyre::eyre::{OptionExt as _, Result, eyre};
+use color_eyre::{
+    Section,
+    eyre::{OptionExt, Result, eyre},
+};
 use reqwest::{Client, Response};
 use semver::Version;
+use tokio::sync::OnceCell;
 
 #[derive(Debug)]
 pub struct Releases {
-    pub(in crate::structs::releases) releases: Vec<Release>,
+    pub(in crate::structs::releases) releases: OnceCell<Vec<Release>>,
+    current_release: OnceCell<usize>,
 }
 
 impl From<Vec<Release>> for Releases {
     fn from(releases: Vec<Release>) -> Self {
-        Self::new(releases)
+        Self {
+            releases: releases.into(),
+            current_release: OnceCell::new(),
+        }
     }
 }
 
 impl Releases {
-    /// Creates a new `Releases`.
-    pub const fn new(releases: Vec<Release>) -> Self {
-        Self { releases }
+    pub fn new() -> Self {
+        Self {
+            releases: OnceCell::new(),
+            current_release: OnceCell::new(),
+        }
     }
-    /// Latest `Release`, if any.
-    pub fn latest(&self) -> Option<&Release> {
-        self.releases.first()
+}
+
+impl Releases {
+    pub const fn latest_index(&self) -> usize {
+        0
+    }
+    pub fn latest(&self) -> Result<&Release> {
+        self.releases()?.get(self.latest_index()).ok_or_eyre(
+            "No releases exist. Getting this error is pretty impossible due to the earlier ?. If you get this, here's a cookie 🍪",
+        )
+    }
+    pub fn current_index(&self) -> Result<usize> {
+        let cargo_version: Version = env!("CARGO_PKG_VERSION")
+            .parse()
+            .with_note(|| "CARGO_PKG_VERSION doesn't have valid syntax.")?;
+        self.releases()?
+            .into_iter()
+            .position(|release: &Release| *release.version() == cargo_version)
+            .ok_or_eyre(format!(
+                "CARGO_PKG_VERSION ({cargo_version}) doesn't exist as a version on GitHub."
+            ))
+    }
+    /// Current release. `Err` if no releases exist.
+    pub async fn current(&self) -> Result<&Release> {
+        let releases: &Vec<Release> = self.releases()?;
+        releases
+            .get(
+                *self
+                    .current_release
+                    .get_or_try_init(async || -> Result<usize> { self.current_index() })
+                    .await?,
+            )
+            .ok_or_eyre("Invalid current_release cache.")
+    }
+    pub(in crate::structs::releases) fn releases(&self) -> Result<&Vec<Release>> {
+        self.try_into()
+    }
+    pub(in crate::structs::releases) fn releases_mut(&mut self) -> Result<&mut Vec<Release>> {
+        self.try_into()
     }
     /// Sorts the releases by their version, so the newest release is the first.
-    pub fn sort_unstable_by_version(&mut self) {
-        self.releases
+    ///
+    /// # Errors
+    /// If `self` isn't initialized.
+    pub fn sort_unstable_by_version(&mut self) -> Result<()> {
+        self.releases_mut()?
             .sort_unstable_by(|r1, r2| r1.version().cmp(r2.version()));
+        // Ok.
+        Ok(())
     }
     /// Checks if the passed `Version` exists.
-    pub fn check_version(&self, version: &Version) -> Result<()> {
-        self.find_with_version(version)
-            .map(|_| ())
-            .ok_or_eyre(eyre!("The version {version} doesn't exist."))
+    pub fn version_exists(&self, version: &Version) -> Result<bool> {
+        if let Some(_) = self.find_version(version)?.map(|_| ()) {
+            // Ok.
+            Ok(true)
+        } else {
+            // Ok.
+            Ok(false)
+        }
     }
     /// Gets only safe versions.
-    pub fn safe_versions(&self) -> Vec<&Release> {
-        self.releases
+    pub fn safe_versions(&self) -> Result<Vec<&Release>> {
+        // Ok.
+        Ok(self
+            .releases()?
             .iter()
             .filter(|release| release.is_safe())
-            .collect()
+            .collect())
     }
     /// Finds the release that has the given version.
-    pub fn find_with_version(&self, version: &Version) -> Option<&Release> {
-        self.releases
+    pub fn find_version(&self, version: &Version) -> Result<Option<&Release>> {
+        Ok(self
+            .releases()?
             .iter()
-            .find(|release| *release.version() == *version)
+            .find(|release| *release.version() == *version))
     }
     /// Returns a vector of the versions.
-    pub fn as_versions(&self) -> Vec<&Version> {
-        self.releases.iter().map(Release::version).collect()
+    pub fn as_versions(&self) -> Result<Vec<&Version>> {
+        self.try_into()
     }
     /// Returns the first safe release after the passed one.
     ///
     /// If the passed release is safe, it will return that one.
-    pub fn first_safe_after(&self, initial: &Version) -> Option<&Release> {
-        self.releases
+    pub fn first_safe_after(&self, initial: &Version) -> Result<Option<&Release>> {
+        Ok(self
+            .releases()?
             .iter()
             .skip_while(|release| *release.version() != *initial)
-            .find(|release| release.is_safe())
+            .find(|release| release.is_safe()))
     }
     /// Fetches the releases from the GitHub repository.
     ///
     /// Automatically sorts the releases.
-    pub async fn fetch() -> Result<Self> {
-        // Fetch into Self.
-        let mut releases: Self = Self::raw_fetch().await?;
-        // Sort the releases.
-        releases.sort_unstable_by_version();
+    pub async fn fetch(self) -> Result<Self> {
+        if let Some(_) = self.releases.get() {
+            // Ok.
+            return Ok(self);
+        };
+        self.releases.set(async || {
+            // Fetch into Self.
+            let mut releases: Self = Self::raw_fetch().await?;
+            // Sort the releases.
+            releases.sort_unstable_by_version();
+            // Ok.
+            Ok(releases)
+        });
         // Ok.
-        Ok(releases)
+        Ok(self)
     }
     /// todo: log this function
     async fn raw_fetch() -> Result<Self> {

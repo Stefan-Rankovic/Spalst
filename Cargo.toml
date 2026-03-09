@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+
 [workspace]
 members = [
 	"spalst",
@@ -18,18 +20,32 @@ description = "TUI menu-based game."
 opt-level = 3
 overflow-checks = true
 lto = "fat"
-codegen-utils = 1
+codegen-units = 1
 
 [workspace.dependencies]
-clap = { version = "4.5.58", features = ["derive"] }
+bytes = "1.11.1"
+chrono = { version = "0.4.44", features = ["serde"] }
+clap = { version = "4.5.60", features = ["derive"] }
 color-eyre = "0.6.5"
-crossterm = "0.29.0"
+crossterm = { version = "0.29.0", features = ["event-stream"] }
+futures = "0.3.32"
+lasso = { version = "0.7.3", features = ["multi-threaded", "serialize"] } # todo: make use of the multi-threaded feature and use ThreadedRodeo
 log = "0.4.29"
 ratatui = "0.30.0"
+reqwest = { version = "0.13.2", features = ["json"] }
+ron = "0.12.0"
+rust_decimal = "1.40.0"
+rust_decimal_macros = "1.40.0"
+semver = { version = "1.0.27", features = ["serde"] }
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.149"
+simplelog = "0.12.2"
 spalst_core = { path = "spalst_core/" }
 spalstatui = { path = "spalstatui/" }
+strum = "0.28.0"
+strum_macros = "0.28.0"
+termimad = "0.34.1"
 tokio = { version = "1.49.0", features = ["full"] }
-rand = "0.10.0" # todo: temporary
 
 # The code is either good or it isn't. The absurd number of denies is not accidental.
 # Lints that are warn instead of deny are either clearly temporary issues or ones from lints.rust I couldn't bother changing to deny.
@@ -101,13 +117,15 @@ useless_ptr_null_checks = "deny"
 while_true = "deny"
 [workspace.lints.clippy]
 # Groups
-cargo = { level = "deny", priority = -1 }
 complexity = { level = "deny", priority = -1 }
 nursery = { level = "deny", priority = -2 }
 pedantic = { level = "deny", priority = -1 }
 perf = { level = "deny", priority = -1 }
 style = { level = "deny", priority = -1 }
 suspicious = { level = "deny", priority = -1 }
+# Cargo
+cargo = { level = "deny", priority = -1 }
+multiple_crate_versions = "warn"
 # Restriction
 absolute_paths = "deny"
 alloc_instead_of_core = "deny"

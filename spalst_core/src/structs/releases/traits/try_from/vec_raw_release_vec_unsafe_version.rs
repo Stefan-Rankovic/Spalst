@@ -25,6 +25,6 @@ impl TryFrom<(Vec<RawRelease>, Vec<UnsafeVersion>)> for Releases {
             releases.push(Release::from_raw(current_version, safety, raw_release));
         }
         // Ok.
-        Ok(Self { releases })
+        Ok(releases.into())
     }
 }

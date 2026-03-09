@@ -5,7 +5,7 @@ use color_eyre::eyre::{Report, Result};
 use semver::Version;
 
 impl Releases {
-    /// Returns a `Vec<&Release>` that contains all releases older than the passed `Version`.
+    /// Returns a new `Vec<&Release>` that contains all releases older than the passed `Version`.
     pub fn older_than<'version, V>(&self, version: V) -> Result<Vec<&Release>>
     where
         V: TryInto<&'version Version>,
@@ -14,7 +14,7 @@ impl Releases {
         let ver: &'version Version = version.try_into().map_err(Into::into)?;
         // Ok.
         Ok(self
-            .releases
+            .releases()?
             .iter()
             .skip_while(|release| *release.version() == *ver)
             .collect())
@@ -26,8 +26,7 @@ impl Releases {
         T::Error: Into<Report>,
     {
         let ver: &Version = version.try_into().map_err(Into::into)?;
-        Ok(self
-            .releases
+        Ok(Vec::<Release>::try_from(self)?
             .into_iter()
             .skip_while(|release| *release.version() == *ver)
             .collect::<Vec<_>>() // todo: replace the underscore with a type, regardless of whether this is an error

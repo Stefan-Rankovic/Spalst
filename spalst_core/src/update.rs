@@ -14,14 +14,13 @@ use std::env;
 pub async fn updater() -> Result<()> {
     let releases: Releases = Releases::fetch().await?;
 
-    let current_release: Release = releases
+    let current_release: &Release = releases
         .find_with_version(
             &env!("CARGO_PKG_VERSION")
                 .parse()
                 .with_note(|| "CARGO_PKG_VERSION doesn't have valid syntax.")?,
         )
-        .ok_or_eyre(eyre!("CARGO_PKG_VERSION isn't a real version on GitHub."))?
-        .clone();
+        .ok_or_eyre(eyre!("CARGO_PKG_VERSION isn't a real version on GitHub."))?;
 
     let latest_release: Release = releases
         .latest()

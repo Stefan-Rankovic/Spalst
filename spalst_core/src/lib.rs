@@ -7,7 +7,7 @@ mod enums;
 mod structs;
 mod traits;
 mod types;
-// mod update; // todo: uncomment this
+mod update; // todo: uncomment this
 mod utils;
 
 use crate::{

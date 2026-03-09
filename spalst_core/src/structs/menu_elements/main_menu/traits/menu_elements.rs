@@ -5,7 +5,7 @@ use crate::{
     structs::{MenuElementRaw, MenuElementsMainMenu},
     traits::{EnumAsStr as _, MenuElement, MenuElements},
 };
-use ratatui::layout::{Constraint, Direction, Layout, Rect};
+use ratatui::layout::{Constraint, Direction, HorizontalAlignment, Layout, Rect};
 use spalstatui::{structs::Block, traits::Styled as _};
 use std::rc::Rc;
 use strum::{EnumCount, IntoDiscriminant, IntoEnumIterator as _};
@@ -21,29 +21,43 @@ impl MenuElements for MenuElementsMainMenu {
     }
 
     async fn elements(&self) -> Vec<Box<dyn MenuElement>> {
-        <Self::Elements as IntoDiscriminant>::Discriminant::iter().map(
-            |variant: <Self::Elements as IntoDiscriminant>::Discriminant| -> Box<dyn MenuElement> {
+        <Self::Elements as IntoDiscriminant>::Discriminant::iter()
+            .map(|variant| -> Box<dyn MenuElement> {
                 let text: String = variant.as_str_user().to_string();
-                let selected: bool = self.selected_element().map(IntoDiscriminant::discriminant) == Some(variant);
-                Box::new(match variant {
-                    <Self::Elements as IntoDiscriminant>::Discriminant::Continue => {
-                        let mut element: MenuElementRaw = MenuElementRaw::new(true, selected, text);
-                        if !self.last_played_available {
-                            element.italic();
-                            element.dim();
+                let selected: bool =
+                    self.selected_element().map(IntoDiscriminant::discriminant) == Some(variant);
+                Box::new(
+                    match variant {
+                        <Self::Elements as IntoDiscriminant>::Discriminant::Continue => {
+                            let mut element: MenuElementRaw = MenuElementRaw::new(
+                                true,
+                                selected,
+                                text,
+                                HorizontalAlignment::Center,
+                            );
+                            if !self.last_played_available {
+                                element.italic();
+                                element.dim();
+                            }
+                            element
                         }
-                        element
+                        <Self::Elements as IntoDiscriminant>::Discriminant::CreatePlaythrough
+                        | <Self::Elements as IntoDiscriminant>::Discriminant::ManagePlaythroughs
+                        | <Self::Elements as IntoDiscriminant>::Discriminant::Settings
+                        | <Self::Elements as IntoDiscriminant>::Discriminant::Achievements
+                        | <Self::Elements as IntoDiscriminant>::Discriminant::Quit => {
+                            MenuElementRaw::new(true, selected, text, HorizontalAlignment::Center)
+                        }
                     }
-                    < Self::Elements as IntoDiscriminant>::Discriminant::CreatePlaythrough | <Self::Elements as IntoDiscriminant>::Discriminant::ManagePlaythroughs | <Self::Elements as IntoDiscriminant>::Discriminant::Settings|<Self::Elements as IntoDiscriminant>::Discriminant::Achievements|<Self::Elements as IntoDiscriminant>::Discriminant::Quit=> {
-                        MenuElementRaw::new(true, selected, text)
-                    }
-                }.with_block(Block::new()).0)
-            },
-        ).collect()
+                    .with_block(Block::new())
+                    .0,
+                )
+            })
+            .collect()
     }
 
     fn elements_area(&self, available_area: Rect) -> Vec<Rect> {
-        const ITEM_HEIGHT: u16 = 3;
+        const ITEM_HEIGHT: u16 = 5; // todo: if this is decreased, like it should be, the text doesn't render
         // Create centered layout
         let vertical_chunks: Rc<[Rect]> = Layout::default()
             .direction(Direction::Vertical)

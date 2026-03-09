@@ -10,7 +10,7 @@ use serde::Deserialize;
 use serde_json::Value;
 
 /// todo: this got its `Clone` derive removed. maybe bring it back?
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct Release {
     version: Version,
     safety: ReleaseSafety,

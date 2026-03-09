@@ -1,7 +1,9 @@
 //! SPDX-License-Identifier: GPL-3.0-only
+
 use crate::{consts::ACHIEVEMENT_DISPLAY_TIME, structs::Achievement};
 use color_eyre::eyre::{Result, bail};
 use log::error;
+use rust_decimal::Decimal;
 use std::collections::VecDeque;
 use tokio::time::Instant;
 
@@ -16,9 +18,10 @@ impl AchievementQueue {
     ///
     /// # Errors
     /// This function will return an Err only if the queue is empty.
-    pub fn seconds_left(&self) -> Result<f64> {
+    pub fn seconds_left(&self) -> Result<Decimal> {
         if let Some(instant) = self.displayed_at {
-            Ok(ACHIEVEMENT_DISPLAY_TIME - instant.elapsed().as_secs_f64())
+            Ok(ACHIEVEMENT_DISPLAY_TIME
+                - Decimal::try_from(instant.elapsed().as_secs_f64()).unwrap())
         } else {
             let error_msg: &str =
                 "Called the function AchievementQueue::seconds_left() when the queue is empty.";

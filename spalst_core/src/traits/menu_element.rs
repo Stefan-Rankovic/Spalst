@@ -3,7 +3,10 @@
 use crate::enums::MenuEvent;
 use core::{any::Any, fmt::Debug, pin::Pin};
 use crossterm::event::KeyEvent;
-use ratatui::{buffer::Buffer, layout::Rect};
+use ratatui::{
+    buffer::Buffer,
+    layout::{HorizontalAlignment, Rect},
+};
 use spalstatui::{
     structs::Block,
     traits::{Styled, WidgetRef},

@@ -9,6 +9,7 @@ use color_eyre::eyre::{OptionExt as _, Result, eyre};
 use core::{sync::atomic::AtomicBool, time::Duration};
 use crossterm::event::{Event, EventStream};
 use futures::StreamExt as _;
+use rust_decimal_macros::dec;
 use spalstatui::structs::{Frame, Terminal};
 use std::{collections::HashMap, path::Path, sync::Arc};
 use tokio::{
@@ -44,6 +45,7 @@ pub struct App {
 }
 
 impl App {
+    #[expect(clippy::needless_pass_by_ref_mut, reason = "It's a todo.")]
     /// Handles the given event.
     pub async fn handle_event(&mut self, event: Event, terminal: &mut Terminal) -> Result<()> {
         if let Event::Resize(..) = event {
@@ -89,6 +91,10 @@ impl App {
             }
         }));
 
+        // Display the update menu
+        self.menu = Menu::new(MenuElementsUpdate);
+        self.update().await?;
+
         // Display the main menu
         self.menu = Menu::new(MenuElementsMainMenu::new(
             true,
@@ -107,7 +113,7 @@ impl App {
             self.display(&mut terminal).await?;
             // Check if the achievement queue should advance
             if self.display_achievements_queue.current().is_some()
-                && self.display_achievements_queue.seconds_left()? < 0.0_f64
+                && self.display_achievements_queue.seconds_left()? <= dec!(0)
             {
                 self.display_achievements_queue.finish_current();
             }

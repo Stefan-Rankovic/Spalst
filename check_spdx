@@ -1,0 +1,7 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-3.0-only
+find ./spalstatui/src/ ./spalst_core/src/ ./spalst/src/ -type f -exec bash -c '
+    for f; do
+        [[ $(head -n 1 "$f") != "//! SPDX-License-Identifier: GPL-3.0-only" ]] && echo "$f"
+    done
+' bash {} +

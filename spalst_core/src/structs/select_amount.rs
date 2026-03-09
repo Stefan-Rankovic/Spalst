@@ -1,6 +1,6 @@
 //! SPDX-License-Identifier: GPL-3.0-only
 
-use std::{
+use core::{
     num::NonZeroU8,
     ops::{Deref, DerefMut},
 };

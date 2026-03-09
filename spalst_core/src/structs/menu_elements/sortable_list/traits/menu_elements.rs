@@ -7,7 +7,7 @@ use crate::{
 };
 use core::fmt::Debug;
 use futures::future::join_all;
-use ratatui::layout::{Constraint, Direction, Layout, Rect};
+use ratatui::layout::{Constraint, Direction, HorizontalAlignment, Layout, Rect};
 use std::{rc::Rc, sync::Arc};
 use strum::{IntoDiscriminant, IntoEnumIterator as _};
 
@@ -38,6 +38,7 @@ impl<
                             true,
                             self.selected_element() == Some(&Self::Elements::SortMethod),
                             self.sort_method.to_string(),
+                            HorizontalAlignment::Center,
                         )) as Box<dyn MenuElement>
                     }
                     <Self::Elements as IntoDiscriminant>::Discriminant::SortAscending => {
@@ -45,6 +46,7 @@ impl<
                             true,
                             self.selected_element() == Some(&Self::Elements::SortAscending),
                             self.sort_ascending.to_string(),
+                            HorizontalAlignment::Center,
                         )) as Box<dyn MenuElement>
                     }
                     <Self::Elements as IntoDiscriminant>::Discriminant::Items => {

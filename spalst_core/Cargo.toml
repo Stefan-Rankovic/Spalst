@@ -2,16 +2,36 @@
 version.workspace = true
 repository.workspace = true
 edition.workspace = true
+description.workspace = true
+keywords.workspace = true
+categories.workspace = true
 name = "spalst_core"
 license-file = "../LICENSE.md"
+readme = "../README.md"
 
 [dependencies]
+bytes.workspace = true
+chrono.workspace = true
 clap.workspace = true
 color-eyre.workspace = true
+crossterm.workspace = true
+futures.workspace = true
+lasso.workspace = true
 log.workspace = true
+ratatui.workspace = true
+reqwest.workspace = true
+ron.workspace = true
+rust_decimal.workspace = true
+rust_decimal_macros.workspace = true
+semver.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+simplelog.workspace = true
 spalstatui.workspace = true
+strum.workspace = true
+strum_macros.workspace = true
+termimad.workspace = true
 tokio.workspace = true
-rand.workspace = true # todo: this should give an error!
 
 [lints]
 workspace = true
