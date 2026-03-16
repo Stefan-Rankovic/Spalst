@@ -4,7 +4,7 @@ use crate::traits::Widget;
 use core::pin::Pin;
 use ratatui::{buffer::Buffer, layout::Rect};
 
-pub trait WidgetRef: Sync {
+pub(crate) trait WidgetRef: Sync {
     fn render_ref<'future>(
         &'future self,
         area: Rect,

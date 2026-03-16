@@ -2,6 +2,6 @@
 
 use ratatui::{buffer::Buffer, layout::Rect};
 
-pub trait Widget {
+pub(crate) trait Widget {
     fn render(self, area: Rect, buf: &mut Buffer) -> impl Future<Output = ()>;
 }
