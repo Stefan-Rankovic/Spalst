@@ -1,0 +1,9 @@
+#!/bin/zsh
+# SPDX-License-Identifier: GPL-3.0-only
+
+source $ZDOTDIR/aliases/clear.zsh
+
+clear
+cargo run -Zcargo-lints -- --clean-previous-logs --log-level trace
+bat logs/*
+

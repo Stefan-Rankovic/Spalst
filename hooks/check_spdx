@@ -1,0 +1,41 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-3.0-only
+
+EXEMPT=(
+	"(^|.*/)LICENSE$"
+	"(^|.*/)README\.md$"
+)
+
+failed=0
+
+while IFS= read -r file; do
+	# All exempt files don't need a header
+	for exempt in "${EXEMPT[@]}"; do
+		if [[ "$file" =~ $exempt ]]; then
+			continue 2
+		fi
+	done
+
+	# The first line
+    first=$(head -1 "$file")
+	# If the first line starts with a shebang, ignore it
+    if echo "$first" | grep -qF "#!/bin/"; then
+        line=$(sed -n '2p' "$file")
+	else
+		line="$first"
+	fi
+	# If the line has no license header, failed is set to 1
+    if ! echo "$line" | grep -qF "SPDX-License-Identifier: GPL-3.0-only"; then
+        echo "Missing license header: $file"
+        failed=1
+    fi
+done < <(git ls-files)
+
+if [ "$failed" -ne 0 ]; then
+    echo "Commit blocked: some files are missing the SPDX license header."
+    exit 1
+fi
+
+exit 0
+
+

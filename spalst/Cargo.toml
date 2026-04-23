@@ -1,0 +1,19 @@
+[package]
+categories.workspace = true
+keywords.workspace = true
+repository.workspace = true
+edition.workspace = true
+description.workspace = true
+version.workspace = true
+name = "spalst"
+license-file = "../LICENSE.md"
+readme = "../README.md"
+
+[dependencies]
+color-eyre.workspace = true
+spalst_source.workspace = true
+tokio.workspace = true
+
+[lints]
+workspace = true
+

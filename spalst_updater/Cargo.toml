@@ -1,0 +1,30 @@
+# SPDX-License-Identifier: GPL-3.0-only
+
+[package]
+categories.workspace = true
+description.workspace = true
+edition.workspace = true
+keywords.workspace = true
+repository.workspace = true
+version.workspace = true
+name = "spalst_updater"
+license-file = "../LICENSE.md"
+readme = "../README.md"
+
+[dependencies]
+bytes.workspace = true
+color-eyre.workspace = true
+derive-new.workspace = true
+nonempty.workspace = true
+octocrab.workspace = true
+reqwest.workspace = true
+ron.workspace = true
+semver.workspace = true
+serde.workspace = true
+spalst_utils.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+
+[lints]
+workspace = true
+

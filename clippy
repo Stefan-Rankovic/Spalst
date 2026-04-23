@@ -1,0 +1,8 @@
+#!/bin/zsh
+# SPDX-License-Identifier: GPL-3.0-only
+
+source $ZDOTDIR/aliases/clear.zsh
+
+clear
+cargo clippy -Zcargo-lints
+

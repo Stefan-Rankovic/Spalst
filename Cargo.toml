@@ -1,28 +1,206 @@
-[package]
-name = "spalst"
-version = "0.0.1"
-edition = "2024"
-license-file = "LICENSE"
+# SPDX-License-Identifier: GPL-3.0-only
 
-[dependencies]
+[workspace]
+members = [
+	"spalst_utils",
+	"spalst_derives",
+	"spalst_updater",
+	"spalst_source",
+	"spalst"
+]
+resolver = "3"
+
+[workspace.package]
+categories = ["command-line-utilities", "games"]
+description = "TUI game. It's pretty good."
+edition = "2024"
+keywords = ["game", "tui", "terminal"]
+repository = "https://github.com/Stefan-Rankovic/Spalst"
+version = "0.0.1"
+
+[profile.release]
+codegen-units = 1
+lto = "fat"
+opt-level = 3
+overflow-checks = true
+
+[workspace.dependencies]
+async-trait = "0.1.89"
+bytes = "1.11.1"
+chrono = "0.4.44"
+clap = { version = "4.6.0", features = ["derive"] }
 color-eyre = "0.6.5"
-clap = { version = "4.5.50", features = ["derive"] }
-colored = "3.0.0"
-reqwest = { version = "0.12.24", features = ["blocking", "json"] }
-ron = "0.12.0"
-serde = { version = "1.0.228", features = ["derive"] }
-serde_json = "1.0.145"
-strum = "0.27.2"
-strum_macros = "0.27.2"
-ratatui = "0.29.0"
-crossterm = { version = "0.28.1", features = ["event-stream"] }
-tokio = { version = "1.47.2", features = ["full"] }
-futures = "0.3.31"
-chrono = { version = "0.4.42", features = ["serde"] }
-log = "0.4.28"
-simplelog = "0.12.2"
-semver = { version = "1.0.27", features = ["serde"] }
-termimad = "0.34.0"
-bytes = "1.11.0"
-async-recursion = "1.1.1"
-itertools = "0.14.0"
+crossterm = { version = "0.29.0", features = ["event-stream"] }
+derive-new = "0.7.0"
+futures = "0.3.32"
+nonempty = "0.12.0"
+octocrab = "0.49.7"
+proc-macro2 = "1.0.106"
+quote = "1.0.45"
+ratatui = "0.30.0"
+reqwest = "0.13.2"
+ron = "0.12.1"
+semver = { version = "1.0.28", features = ["serde"] }
+serde = "1.0.228"
+spalst_derives = { path = "spalst_derives/" }
+spalst_source = { path = "spalst_source/" }
+spalst_updater = { path = "spalst_updater/" }
+spalst_utils = { path = "spalst_utils/" }
+strum = { version = "0.28.0", features = ["derive"] }
+syn = "2.0.117"
+tokio = { version = "1.52.0", features = ["full"] }
+tracing = { version = "0.1.44", features = ["attributes"] }
+tracing-error = "0.2.1"
+tracing-subscriber = "0.3.23"
+
+
+# Lints that are warn instead of deny are one of:
+#	- Clearly temporary issues
+#	- Ones from lints.rust that are in by default that I couldn't bother changing to deny (there are so many).
+[workspace.lints.cargo]
+# Groups
+complexity = { level = "deny", priority = -1 }
+nursery = { level = "deny", priority = -2 }
+pedantic = { level = "deny", priority = -1 }
+perf = { level = "deny", priority = -1 }
+style = { level = "deny", priority = -1 }
+suspicious = { level = "deny", priority = -1 }
+# Restriction
+non_snake_case_features = "deny"
+non_snake_case_packages = "deny"
+[workspace.lints.rust]
+# Groups
+deprecated_safe = { level = "deny", priority = -1 }
+future_incompatible = { level = "deny", priority = -1 }
+keyword_idents = { level = "deny", priority = -1 }
+refining_impl_trait = { level = "deny", priority = -1 }
+unused = { level = "warn", priority = -1 }
+# Allow by default
+absolute_paths_not_starting_with_crate = "deny"
+ambiguous_negative_literals = "deny"
+closure_returning_async_block = "deny"
+elided_lifetimes_in_paths = "deny"
+macro_use_extern_crate = "deny"
+missing_debug_implementations = "deny"
+missing_docs = "warn"
+missing_unsafe_on_extern = "deny"
+non_ascii_idents = "deny"
+redundant_imports = "deny"
+redundant_lifetimes = "deny"
+single_use_lifetimes = "deny"
+unit_bindings = "deny"
+unsafe_attr_outside_unsafe = "deny"
+unsafe_code = "deny"
+unsafe_op_in_unsafe_fn = "deny"
+unused_crate_dependencies = "deny"
+unused_extern_crates = "deny"
+unused_import_braces = "deny"
+unused_lifetimes = "deny"
+unused_macro_rules = "deny"
+unused_qualifications = "deny"
+unused_results = "deny"
+# Warn by default
+const_item_mutation = "deny"
+dropping_copy_types = "deny"
+dropping_references = "deny"
+forgetting_copy_types = "deny"
+forgetting_references = "deny"
+invalid_nan_comparisons = "deny"
+invalid_value = "deny"
+irrefutable_let_patterns = "deny"
+non_camel_case_types = "deny"
+path_statements = "deny"
+redundant_semicolons = "deny"
+unfulfilled_lint_expectations = "deny"
+uninhabited_static = "deny"
+unknown_diagnostic_attributes = "deny"
+unknown_lints = "deny"
+unnecessary_transmutes = "deny"
+unreachable_code = "deny"
+unreachable_patterns = "deny"
+unstable_name_collisions = "deny"
+unused_associated_type_bounds = "deny"
+unused_comparisons = "deny"
+useless_ptr_null_checks = "deny"
+while_true = "deny"
+[workspace.lints.clippy]
+# Groups
+complexity = { level = "deny", priority = -1 }
+nursery = { level = "deny", priority = -2 }
+pedantic = { level = "deny", priority = -1 }
+perf = { level = "deny", priority = -1 }
+style = { level = "deny", priority = -1 }
+suspicious = { level = "deny", priority = -1 }
+# Cargo
+cargo = { level = "deny", priority = -1 }
+multiple_crate_versions = "warn"
+# Restriction
+absolute_paths = "deny"
+alloc_instead_of_core = "deny"
+allow_attributes = "deny"
+allow_attributes_without_reason = "warn"
+as_conversions = "deny"
+as_pointer_underscore = "deny"
+as_underscore = "deny"
+cfg_not_test = "deny"
+clone_on_ref_ptr = "deny"
+create_dir = "deny"
+dbg_macro = "warn"
+default_numeric_fallback = "deny"
+else_if_without_else = "deny"
+empty_enum_variants_with_brackets = "deny"
+empty_structs_with_brackets = "deny"
+expect_used = "deny"
+filetype_is_file = "deny"
+float_arithmetic = "deny"
+float_cmp_const = "deny"
+fn_to_numeric_cast_any = "deny"
+get_unwrap = "deny"
+if_then_some_else_none = "deny"
+impl_trait_in_params = "deny"
+infinite_loop = "deny"
+integer_division = "deny"
+large_include_file = "deny"
+let_underscore_untyped = "deny"
+map_err_ignore = "deny"
+mem_forget = "deny"
+min_ident_chars = "deny"
+missing_assert_message = "deny"
+missing_docs_in_private_items = "warn"
+module_name_repetitions = "deny"
+mutex_atomic = "deny"
+mutex_integer = "deny"
+needless_raw_strings = "deny"
+non_zero_suggestions = "deny"
+pathbuf_init_then_push = "deny"
+pattern_type_mismatch = "deny"
+precedence_bits = "deny"
+print_stderr = "warn"
+print_stdout = "deny"
+rc_buffer = "deny"
+rc_mutex = "deny"
+redundant_test_prefix = "deny"
+renamed_function_params = "deny"
+rest_pat_in_fully_bound_structs = "deny"
+return_and_then = "deny"
+same_name_method = "deny"
+self_named_module_files = "deny"
+shadow_same = "deny"
+shadow_unrelated = "deny"
+single_char_lifetime_names = "deny"
+std_instead_of_core = "deny"
+string_slice = "deny"
+todo = "warn"
+try_err = "deny"
+undocumented_unsafe_blocks = "deny"
+unnecessary_safety_comment = "warn"
+unnecessary_safety_doc = "deny"
+unnecessary_self_imports = "deny"
+unneeded_field_pattern = "deny"
+unseparated_literal_suffix = "deny"
+unused_result_ok = "deny"
+unused_trait_names = "deny"
+use_debug = "warn"
+verbose_file_reads = "deny"
+wildcard_enum_match_arm = "deny"
+
