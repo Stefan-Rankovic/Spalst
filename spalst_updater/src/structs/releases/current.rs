@@ -25,7 +25,21 @@ impl Releases {
             .expect("The current version doesn't exist as a release. This probably means you're ahead of the master branch. If not, you get a cookie 🍪")
     }
 
+    /// todo: maybe remove this; I don't see how this is useful (because safeties exist)
+    #[must_use]
     pub fn is_on_latest(&self) -> bool {
         current_version() == self.latest_version()
+    }
+
+    /// All releases newer than the current one.
+    ///
+    /// Newest release is first.
+    #[must_use]
+    pub fn newer(&self) -> Vec<&Release> {
+        let current_release: &Release = self.current_release();
+        self.releases
+            .iter()
+            .take_while(|release: &&Release| **release != *current_release)
+            .collect()
     }
 }

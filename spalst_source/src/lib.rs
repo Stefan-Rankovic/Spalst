@@ -2,7 +2,6 @@
 
 // #![feature(inherent_associated_types)]
 
-mod declarative_macros;
 mod enums;
 mod structs;
 mod traits;
@@ -11,7 +10,7 @@ mod utils;
 use crate::structs::{App, ArgsParser, Logger};
 use clap::Parser as _;
 use color_eyre::eyre::Result;
-use spalst_updater::structs::ProgramUpdater;
+use spalst_updater::structs::SafeProgramUpdater;
 use tracing::instrument;
 
 /// Initializes the program.
@@ -19,7 +18,7 @@ use tracing::instrument;
 #[expect(clippy::missing_errors_doc, reason = "main function")]
 #[instrument]
 pub async fn run() -> Result<()> {
-    println!("{}", size_of::<ProgramUpdater>()); // todo: remove
+    println!("{}", size_of::<SafeProgramUpdater>()); // todo: remove
 
     let args: ArgsParser = ArgsParser::parse();
 

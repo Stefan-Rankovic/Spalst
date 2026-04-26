@@ -4,6 +4,7 @@ use bytes::Bytes;
 use color_eyre::eyre::{OptionExt as _, Result};
 use octocrab::models::repos::{Asset, Release};
 
+/// Get the executable from Github for the current OS and architecture.
 pub async fn get_asset(release: &Release) -> Result<Bytes> {
     let asset: &Asset = release
         .assets
@@ -20,7 +21,7 @@ pub async fn get_asset(release: &Release) -> Result<Bytes> {
     Ok(bytes)
 }
 
-fn asset_matches_target_name(name: &str) -> bool {
-    // name.contains(env!("CARGO_CFG_TARGET_ARCH")) && name.contains(env!("CARGO_CFG_TARGET_OS"))
+/// Whether the asset name is the correct one for the current OS and architecture.
+fn asset_matches_target_name(_name: &str) -> bool {
     todo!()
 }

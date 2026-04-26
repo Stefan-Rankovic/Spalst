@@ -4,10 +4,11 @@ use crate::{
     consts::{GITHUB_REPO_NAME, GITHUB_REPO_OWNER, SAFETY_PATH},
     structs::{Releases, VersionSafety},
 };
-use color_eyre::eyre::{OptionExt as _, Report, Result, bail};
+use color_eyre::eyre::{OptionExt as _, Report, Result};
 use core::cmp;
 use nonempty::NonEmpty;
 use octocrab::{Octocrab, Page, models::repos::Release};
+use spalst_utils::bail_log;
 
 impl Releases {
     /// Fetches releases from the GitHub repository.
@@ -61,7 +62,7 @@ impl Releases {
             .await?;
 
         let mut releases: NonEmpty<Release> = if page.items.is_empty() {
-            bail!("There are no releases on GitHub");
+            bail_log!("There are no releases on Github.");
         } else {
             let first: Release = page.items.swap_remove(0); // Fine because we sort later
             let rest: Vec<Release> = page.items;
@@ -79,7 +80,7 @@ impl Releases {
         // Guarantees every `Release` has a release date
         for release in &releases {
             if release.published_at.is_none() {
-                bail!("Release {release:?} has published_at set to None.")
+                bail_log!("Release {release:?} has published_at set to None.")
             }
         }
 
