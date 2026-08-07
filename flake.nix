@@ -47,6 +47,10 @@
             src = craneLib.cleanCargoSource ./.;
             libPath = lib.makeLibraryPath runtimeDependencies;
             pname = "spalst";
+            nativeBuildInputs = with pkgs; [
+                clang # Needed for `mold`
+                mold
+            ];
             isValidProfile =
                 profile:
                 assert builtins.isString profile;
@@ -55,7 +59,7 @@
                 profile:
                 assert isValidProfile profile;
                 craneLib.buildDepsOnly {
-                    inherit pname src;
+                    inherit nativeBuildInputs pname src;
                     CARGO_PROFILE = profile;
                 };
             mkCranePackage =
@@ -63,9 +67,7 @@
                 assert isValidProfile profile;
                 craneLib.buildPackage {
                     inherit pname src;
-                    nativeBuildInputs = with pkgs; [
-                        makeWrapper
-                    ];
+                    nativeBuildInputs = nativeBuildInputs ++ [ pkgs.makeWrapper ];
                     postInstall = ''
                         wrapProgram "$out/bin/spalst" --prefix LD_LIBRARY_PATH : "${libPath}"
                     '';
@@ -77,6 +79,10 @@
 
         in
         {
+            devShells.${pkgs.stdenv.hostPlatform.system}.default = pkgs.mkShell {
+                inherit nativeBuildInputs;
+                packages = [ toolchain ];
+            };
             packages.${pkgs.stdenv.hostPlatform.system} =
                 lib.attrsets.unionOfDisjoint
                     {
@@ -94,11 +100,5 @@
                             ) profiles
                         )
                     );
-            devShells.${pkgs.stdenv.hostPlatform.system}.default = pkgs.mkShell {
-                packages = with pkgs; [
-                    toolchain
-                    gcc
-                ];
-            };
         };
 }
