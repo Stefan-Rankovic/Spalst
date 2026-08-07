@@ -7,6 +7,10 @@ use crate::structs::{ArgsParser, ScreenManager};
 use clap::Parser as _;
 use color_eyre::{Report, eyre::Result};
 
+/// The actual state of the app.
+///
+/// This is separate from `App` because `App` is dropped after `eframe::run_native` finishes.
+/// And, as also commented in the `render_error` field of this struct, that is a problem.
 #[derive(Debug)]
 pub struct AppState {
     /// The error encountered while handling requests.
