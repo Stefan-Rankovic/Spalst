@@ -62,7 +62,7 @@ const fn default_max_log_level() -> LogLevel {
     }
 }
 
-/// Whether the program was compiled the `dev` profile.
+/// Whether the program was compiled with the `dev` profile.
 #[cfg(feature = "logging")]
 const fn dev_profile() -> bool {
     cfg!(debug_assertions)
