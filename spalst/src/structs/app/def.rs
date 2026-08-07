@@ -6,6 +6,9 @@ use std::sync::{Arc, Mutex};
 use tokio::sync::mpsc::UnboundedSender;
 
 /// The main struct of this app that holds everything.
+///
+/// Although, the actual data lives in this struct's `AppState` field; this is just a wrapper.
+/// The reason is documented in the documentation of `AppState`.
 pub struct App {
     /// The actual data.
     pub state: Arc<Mutex<AppState>>,
