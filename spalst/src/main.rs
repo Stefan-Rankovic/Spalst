@@ -57,6 +57,7 @@ async fn main() -> Result<()> {
         .take_render_error()
         .map_or(Ok(()), Err)?;
 
+    #[cfg(feature = "logging")]
     if let Some(logger) = app_state.lock().unwrap().logger.as_mut() {
         logger.successful_exit = true;
     }

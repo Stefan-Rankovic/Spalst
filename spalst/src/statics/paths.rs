@@ -18,4 +18,5 @@ pub static HOME_DIR: LazyLock<AbsolutePathBuf> = LazyLock::new(|| {
 });
 
 /// The directory containing logfiles.
+#[cfg(feature = "logging")]
 pub static LOG_FILES_DIR: LazyLock<AbsolutePathBuf> = LazyLock::new(|| HOME_DIR.join(".local/state/spalst/logs"));

@@ -6,6 +6,7 @@ mod app;
 mod app_state;
 mod args_parser;
 mod deleted_save;
+#[cfg(feature = "logging")]
 mod logger;
 mod playthrough;
 mod save;
@@ -20,6 +21,7 @@ pub use app::App;
 pub use app_state::AppState;
 pub use args_parser::ArgsParser;
 pub use deleted_save::DeletedSave;
+#[cfg(feature = "logging")]
 pub use logger::Logger;
 pub use playthrough::Playthrough;
 pub use save::Save;

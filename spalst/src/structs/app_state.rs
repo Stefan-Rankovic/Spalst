@@ -1,9 +1,11 @@
 //! SPDX-License-Identifier: GPL-3.0-or-later
 //! SPDX-FileCopyrightText: Stefan Rankovic <stefi.rankovic@proton.me>
 
+#[cfg(feature = "logging")]
+use crate::structs::Logger;
 use crate::{
     enums::{Request, ScreenManagerRequest},
-    structs::{ArgsParser, Logger, ScreenId, ScreenManager},
+    structs::{ArgsParser, ScreenId, ScreenManager},
 };
 use clap::Parser as _;
 use color_eyre::{Report, eyre::Result};
@@ -26,6 +28,7 @@ pub struct AppState {
     /// CLI arguments passed to the program.
     args: ArgsParser,
     /// The logger.
+    #[cfg(feature = "logging")]
     pub logger: Option<Logger>,
     /// The `Screen` manager.
     pub screen_manager: ScreenManager,
@@ -69,9 +72,11 @@ impl AppState {
     /// Tries to get a new `App` instance.
     ///
     /// # Errors
-    /// If initializing the `Logger` fails (`Logger::try_init_new` function).
+    /// If initializing the `Logger` fails (`Logger::try_init_new` function). Exclusive to the
+    /// `logging` feature.
     pub async fn try_new() -> Result<Self> {
         let args: ArgsParser = ArgsParser::parse();
+        #[cfg(feature = "logging")]
         let logger: Option<Logger> = args.log.then_some(Logger::try_init_new(&args).await?);
         let screen_manager: ScreenManager = ScreenManager::new();
 
@@ -79,6 +84,7 @@ impl AppState {
             handle_error: None,
             render_error: None,
             args,
+            #[cfg(feature = "logging")]
             logger,
             screen_manager,
         })

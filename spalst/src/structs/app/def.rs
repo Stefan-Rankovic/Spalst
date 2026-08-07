@@ -19,9 +19,6 @@ pub struct App {
 
 impl App {
     /// Tries to get a new `App` instance.
-    ///
-    /// # Errors
-    /// If initializing the `Logger` fails (`Logger::try_init_new` function).
     pub const fn new(
         state: Arc<Mutex<AppState>>,
         tx: UnboundedSender<Request>,

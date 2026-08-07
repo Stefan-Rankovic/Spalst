@@ -3,4 +3,6 @@
 
 mod paths;
 
-pub use paths::{HOME_DIR, LOG_FILES_DIR};
+pub use paths::HOME_DIR;
+#[cfg(feature = "logging")]
+pub use paths::LOG_FILES_DIR;
