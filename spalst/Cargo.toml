@@ -1,0 +1,32 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: Stefan Rankovic <stefi.rankovic@proton.me>
+
+[package]
+categories.workspace = true
+description.workspace = true
+edition.workspace = true
+keywords.workspace = true
+repository.workspace = true
+version.workspace = true
+name = "spalst"
+license-file = "../LICENSES/GPL-3.0-or-later.txt"
+readme = "../README.md"
+
+[dependencies]
+chrono.workspace = true
+clap.workspace = true
+color-eyre.workspace = true
+derive-new.workspace = true
+eframe.workspace = true
+egui.workspace = true
+egui-elegance.workspace = true
+futures.workspace = true
+home.workspace = true
+indextree.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+tracing-error.workspace = true
+tracing-subscriber.workspace = true
+
+[lints]
+workspace = true
