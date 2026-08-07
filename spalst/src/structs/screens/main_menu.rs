@@ -19,7 +19,7 @@ impl Screen for MainMenuScreen {
         ui: &mut Ui,
         app: &App,
     ) -> Vec<Request> {
-        let mut result: Vec<Request> = Vec::new();
+        let mut requests: Vec<Request> = Vec::new();
         let _: InnerResponse<()> = ui.vertical_centered(|ui: &mut Ui| {
             let _: Response = ui.heading("Spalst");
             {
@@ -39,7 +39,7 @@ impl Screen for MainMenuScreen {
                 let _: Response = response.on_disabled_hover_text("Not implemented yet.");
             }
             if ui.button("Settings").clicked() {
-                result.push(Request::ScreenManager(
+                requests.push(Request::ScreenManager(
                     ScreenManagerRequest::AddAndSelectScreen {
                         screen: Box::new(SettingsScreen),
                         parent_id: app.state.lock().unwrap().screen_manager.current_id(),
@@ -51,9 +51,9 @@ impl Screen for MainMenuScreen {
                 let _: Response = response.on_disabled_hover_text("Not implemented yet.");
             }
             if ui.button("Quit").clicked() {
-                result.push(Request::Quit);
+                requests.push(Request::Quit);
             }
         });
-        result
+        requests
     }
 }
