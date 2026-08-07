@@ -2,4 +2,5 @@
 # SPDX-FileCopyrightText: Stefan Rankovic <stefi.rankovic@proton.me>
 
 .direnv/
+result
 target/
