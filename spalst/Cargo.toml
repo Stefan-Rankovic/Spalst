@@ -3,7 +3,7 @@
 
 [package]
 categories.workspace = true
-# description.workspace = true # todo
+description.workspace = true
 edition.workspace = true
 keywords.workspace = true
 repository.workspace = true

@@ -17,7 +17,7 @@ resolver = "3"
 
 [workspace.package]
 categories = ["games"]
-# description = "" # todo
+description = "GUI game."                                # todo
 edition = "2024"
 keywords = ["game"]
 repository = "https://github.com/Stefan-Rankovic/Spalst"
