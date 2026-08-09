@@ -16,10 +16,10 @@ members = [
 resolver = "3"
 
 [workspace.package]
-categories = ["command-line-utilities", "games"]
-description = "TUI game. It's pretty good."
+categories = ["games"]
+# description = "" # todo
 edition = "2024"
-keywords = ["game", "tui", "terminal"]
+keywords = ["game"]
 repository = "https://github.com/Stefan-Rankovic/Spalst"
 version = "0.0.1"
 
