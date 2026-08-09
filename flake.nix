@@ -2,8 +2,11 @@
 # SPDX-FileCopyrightText: Stefan Rankovic <stefi.rankovic@proton.me>
 
 {
+    # description = ""; # todo
+
     inputs = {
         nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+        flake-parts.url = "github:hercules-ci/flake-parts";
 
         crane.url = "github:ipetkov/crane";
         fenix = {
@@ -13,92 +16,23 @@
     };
 
     outputs =
-        {
-            crane,
-            fenix,
-            nixpkgs,
+        inputs@{
+            flake-parts,
             ...
         }:
-        let
-            profiles = [
-                "dev"
-                "release"
-            ];
-            defaultProfile = "release";
+        flake-parts.lib.mkFlake { inherit inputs; } {
+            imports = [
+                ./nix/modules
 
-            runtimeDependencies = with pkgs; [
-                wayland
-                libxkbcommon
-                libGL
+                ./nix/checks.nix
+                ./nix/compile_options_data.nix
+                ./nix/dev_shells.nix
+                ./nix/legacy_packages.nix
+                ./nix/mk_crane_package.nix
+                ./nix/packages.nix
+                ./nix/per_system_module_args.nix
             ];
-            inherit (nixpkgs) lib;
-            pkgs = import nixpkgs {
-                system = "x86_64-linux";
-                overlays = [ fenix.overlays.default ];
-            };
-            toolchain = pkgs.fenix.complete.withComponents [
-                "cargo"
-                "clippy"
-                "rust-src"
-                "rustc"
-                "rustfmt"
-            ];
-            craneLib = (crane.mkLib pkgs).overrideToolchain toolchain;
-            src = craneLib.cleanCargoSource ./.;
-            libPath = lib.makeLibraryPath runtimeDependencies;
-            pname = "spalst";
-            nativeBuildInputs = with pkgs; [
-                clang # Needed for `mold`
-                mold
-            ];
-            isValidProfile =
-                profile:
-                assert builtins.isString profile;
-                builtins.elem profile profiles;
-            mkCargoArtifacts =
-                profile:
-                assert isValidProfile profile;
-                craneLib.buildDepsOnly {
-                    inherit nativeBuildInputs pname src;
-                    CARGO_PROFILE = profile;
-                };
-            mkCranePackage =
-                profile:
-                assert isValidProfile profile;
-                craneLib.buildPackage {
-                    inherit pname src;
-                    nativeBuildInputs = nativeBuildInputs ++ [ pkgs.makeWrapper ];
-                    postInstall = ''
-                        wrapProgram "$out/bin/spalst" --prefix LD_LIBRARY_PATH : "${libPath}"
-                    '';
-                    cargoExtraArgs = "-Zcargo-lints";
-                    RUSTFLAGS = "-Awarnings"; # Prevent unnecessary build output; this can be easily checked with `cargo clippy` or `cargo check`
-                    cargoArtifacts = mkCargoArtifacts profile;
-                    CARGO_PROFILE = profile;
-                };
 
-        in
-        {
-            devShells.${pkgs.stdenv.hostPlatform.system}.default = pkgs.mkShell {
-                inherit nativeBuildInputs;
-                packages = [ toolchain ];
-            };
-            packages.${pkgs.stdenv.hostPlatform.system} =
-                lib.attrsets.unionOfDisjoint
-                    {
-                        default = mkCranePackage defaultProfile;
-                    }
-                    (
-                        builtins.listToAttrs (
-                            map (
-                                profile:
-                                assert builtins.isString profile;
-                                {
-                                    name = profile;
-                                    value = mkCranePackage profile;
-                                }
-                            ) profiles
-                        )
-                    );
+            systems = [ "x86_64-linux" ];
         };
 }
