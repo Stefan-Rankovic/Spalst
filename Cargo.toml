@@ -46,10 +46,7 @@ tracing-subscriber = "0.3.23"
 #	- Ones from lints.rust that are in by default that I couldn't bother changing to deny (there are so many).
 [workspace.lints.cargo]
 # Groups
-complexity = { level = "deny", priority = -1 }
-nursery = { level = "deny", priority = -2 }
 pedantic = { level = "deny", priority = -1 }
-perf = { level = "deny", priority = -1 }
 style = { level = "deny", priority = -1 }
 suspicious = { level = "deny", priority = -1 }
 # Restriction
