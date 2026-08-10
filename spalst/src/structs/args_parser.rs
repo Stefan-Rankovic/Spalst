@@ -8,6 +8,7 @@ use clap::{ArgAction, Parser};
 /// Parse command-line arguments.
 #[derive(Debug, Parser)]
 #[command(name = "spalst")]
+#[command(about = "GUI game.")] // todo
 pub struct ArgsParser {
     /// Whether to create a logfile for the current program instance.
     #[arg(
