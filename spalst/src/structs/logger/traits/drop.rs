@@ -1,9 +1,8 @@
 //! SPDX-License-Identifier: GPL-3.0-or-later
 //! SPDX-FileCopyrightText: Stefan Rankovic <stefi.rankovic@proton.me>
 
-use crate::structs::Logger;
+use crate::{error, info, structs::Logger, trace};
 use std::fs;
-use tracing::{error, info, trace};
 
 impl Drop for Logger {
     fn drop(&mut self) {

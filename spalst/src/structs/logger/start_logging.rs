@@ -1,10 +1,10 @@
 //! SPDX-License-Identifier: GPL-3.0-or-later
 //! SPDX-FileCopyrightText: Stefan Rankovic <stefi.rankovic@proton.me>
 
-use crate::{bail_log, structs::Logger};
+use crate::{bail_log, info, structs::Logger};
 use color_eyre::eyre::{OptionExt as _, Result};
 use std::fs::File;
-use tracing::{info, instrument, level_filters::LevelFilter};
+use tracing::{instrument, level_filters::LevelFilter};
 use tracing_error::ErrorLayer;
 use tracing_subscriber::{layer::SubscriberExt as _, util::SubscriberInitExt as _};
 

@@ -3,6 +3,7 @@
 
 use crate::structs::{ScreenId, ScreenManager};
 use color_eyre::eyre::{OptionExt as _, Result};
+#[cfg(feature = "logging")]
 use tracing::instrument;
 
 impl ScreenManager {
@@ -10,7 +11,7 @@ impl ScreenManager {
     ///
     /// # Errors
     /// If the current screen is the root screen.
-    #[instrument]
+    #[cfg_attr(feature = "logging", instrument)]
     pub fn back(&mut self) -> Result<ScreenId> {
         {
             self.current_id = *self

@@ -19,10 +19,11 @@ use tokio::{
     sync::mpsc::{self, UnboundedReceiver, UnboundedSender},
     task::JoinHandle,
 };
+#[cfg(feature = "logging")]
 use tracing::instrument;
 
 #[tokio::main]
-#[instrument]
+#[cfg_attr(feature = "logging", instrument)]
 async fn main() -> Result<()> {
     // Initialize `color_eyre`
     color_eyre::install()?;

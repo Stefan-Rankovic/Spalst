@@ -36,6 +36,17 @@ impl AppState {
     /// # Errors
     /// If initializing the `Logger` fails (`Logger::try_init_new` function). Exclusive to the
     /// `logging` feature.
+    #[cfg_attr(
+        not(feature = "logging"),
+        expect(clippy::unused_async, reason = "Only necessary to initialize Logger.")
+    )]
+    #[cfg_attr(
+        not(feature = "logging"),
+        expect(
+            clippy::unused_async_trait_impl,
+            reason = "Only necessary to initialize Logger."
+        )
+    )]
     pub async fn try_new() -> Result<Self> {
         let args: ArgsParser = ArgsParser::parse();
         #[cfg(feature = "logging")]

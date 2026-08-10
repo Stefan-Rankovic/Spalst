@@ -8,6 +8,7 @@
 #[macro_export]
 macro_rules! bail_log {
     ($($arg:tt)*) => {{
+        #[cfg(feature = "logging")]
         tracing::error!($($arg)*);
         color_eyre::eyre::bail!($($arg)*);
     }};

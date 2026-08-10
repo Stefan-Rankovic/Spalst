@@ -3,6 +3,7 @@
 
 use crate::structs::{ScreenId, ScreenManager};
 use color_eyre::eyre::Result;
+#[cfg(feature = "logging")]
 use tracing::instrument;
 
 impl ScreenManager {
@@ -10,7 +11,7 @@ impl ScreenManager {
     ///
     /// # Errors
     /// If the passed ID doesn't point to a `ScreenNode`.
-    #[instrument]
+    #[cfg_attr(feature = "logging", instrument)]
     pub fn select_screen(
         &mut self,
         id: ScreenId,

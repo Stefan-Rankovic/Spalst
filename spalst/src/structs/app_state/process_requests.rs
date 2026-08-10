@@ -25,7 +25,7 @@ impl AppState {
                 return;
             }
 
-            let result: Result<()> = Self::handle_request(Arc::clone(&state), request).await;
+            let result: Result<()> = Self::handle_request(&Arc::clone(&state), request);
             if let Err(report) = result {
                 rx.close();
                 ctx.send_viewport_cmd(ViewportCommand::Close);

@@ -7,9 +7,12 @@ use crate::{
 };
 use color_eyre::Result;
 use std::sync::{Arc, Mutex};
+#[cfg(feature = "logging")]
+use tracing::instrument;
 
 impl AppState {
     /// Handle a `ScreenManagerRequest`.
+    #[cfg_attr(feature = "logging", instrument(skip(state)))]
     pub(super) fn handle_screen_manager_request(
         state: &Arc<Mutex<Self>>,
         request: ScreenManagerRequest,

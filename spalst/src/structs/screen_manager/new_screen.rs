@@ -6,6 +6,7 @@ use crate::{
     traits::Screen,
 };
 use color_eyre::eyre::{OptionExt as _, Result};
+#[cfg(feature = "logging")]
 use tracing::instrument;
 
 impl ScreenManager {
@@ -13,7 +14,7 @@ impl ScreenManager {
     ///
     /// # Errors
     /// If the passed `ScreenId` doesn't point to a `Screen`.
-    #[instrument]
+    #[cfg_attr(feature = "logging", instrument)]
     pub fn add_screen(
         &mut self,
         parent_id: ScreenId,
@@ -38,7 +39,7 @@ impl ScreenManager {
     ///
     /// # Errors
     /// If the call to `self.add_screen()` fails.
-    #[instrument]
+    #[cfg_attr(feature = "logging", instrument)]
     pub fn add_select_screen(
         &mut self,
         parent_id: ScreenId,

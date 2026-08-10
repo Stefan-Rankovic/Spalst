@@ -9,6 +9,7 @@ use tokio::sync::mpsc::UnboundedSender;
 ///
 /// Although, the actual data lives in this struct's `AppState` field; this is just a wrapper.
 /// The reason is documented in the documentation of `AppState`.
+#[derive(Debug)]
 pub struct App {
     /// The actual data.
     pub state: Arc<Mutex<AppState>>,

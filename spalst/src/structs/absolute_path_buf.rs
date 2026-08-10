@@ -5,6 +5,7 @@ use crate::bail_log;
 use color_eyre::eyre::{Report, Result};
 use core::ops::Deref;
 use std::path::{Path, PathBuf};
+#[cfg(feature = "logging")]
 use tracing::instrument;
 
 /// Same as a `PathBuf`, except this is guaranteed to be an absolute path.
@@ -16,7 +17,7 @@ impl AbsolutePathBuf {
     ///
     /// # Errors
     /// If the passed `PathBuf` isn't absolute.
-    #[instrument]
+    #[cfg_attr(feature = "logging", instrument)]
     pub fn try_new(path_buf: PathBuf) -> Result<Self> {
         if !path_buf.is_absolute() {
             bail_log!(

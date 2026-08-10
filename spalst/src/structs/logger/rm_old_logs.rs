@@ -2,13 +2,15 @@
 //! SPDX-FileCopyrightText: Stefan Rankovic <stefi.rankovic@proton.me>
 
 use crate::{
+    debug,
+    info,
     statics::LOG_FILES_DIR,
     structs::{AbsolutePathBuf, Logger},
 };
 use color_eyre::eyre::{Ok, Result};
 use futures::future::try_join_all;
 use tokio::fs::{self, DirEntry, ReadDir};
-use tracing::{debug, info, instrument};
+use tracing::instrument;
 
 impl Logger {
     /// Get the logfiles.

@@ -1,11 +1,10 @@
 //! SPDX-License-Identifier: GPL-3.0-or-later
 //! SPDX-FileCopyrightText: Stefan Rankovic <stefi.rankovic@proton.me>
 
-use crate::{enums::Request, structs::App};
+use crate::{enums::Request, error, structs::App};
 use color_eyre::{Result, eyre::OptionExt as _};
 use eframe::Frame;
 use egui::{Ui, ViewportCommand};
-use tracing::error;
 
 impl eframe::App for App {
     fn ui(

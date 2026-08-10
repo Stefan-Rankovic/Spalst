@@ -7,9 +7,12 @@ use crate::{
 };
 use color_eyre::eyre::{OptionExt as _, Result};
 use egui::Ui;
+#[cfg(feature = "logging")]
+use tracing::instrument;
 
 impl ScreenManager {
     /// Render the screen by calling `ui()` (provided by `Screen`) on the current screen.
+    #[cfg_attr(feature = "logging", instrument(skip(ui)))]
     pub fn render(
         &self,
         ui: &mut Ui,

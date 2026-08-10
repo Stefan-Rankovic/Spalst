@@ -8,6 +8,7 @@ use crate::{
 };
 use color_eyre::eyre::{OptionExt as _, Result};
 use indextree::{Arena, Node};
+#[cfg(feature = "logging")]
 use tracing::instrument;
 
 /// A game `Playthrough`.
@@ -32,7 +33,7 @@ impl Playthrough {
     ///
     /// # Errors
     /// If the passed `SaveId` doesn't point to a save.
-    #[instrument(skip(self))]
+    #[cfg_attr(feature = "logging", instrument(skip(self)))]
     pub fn get_save_node(
         &self,
         id: SaveId,
@@ -47,7 +48,7 @@ impl Playthrough {
     ///
     /// # Errors
     /// If the passed `SaveId` doesn't point to a save.
-    #[instrument(skip(self))]
+    #[cfg_attr(feature = "logging", instrument(skip(self)))]
     pub fn get_save(
         &self,
         id: SaveId,
@@ -59,7 +60,7 @@ impl Playthrough {
     ///
     /// # Errors
     /// If the passed `SaveId` doesn't point to a save.
-    #[instrument(skip(self))]
+    #[cfg_attr(feature = "logging", instrument(skip(self)))]
     pub fn get_save_node_mut(
         &mut self,
         id: SaveId,
@@ -74,7 +75,7 @@ impl Playthrough {
     ///
     /// # Errors
     /// If the passed `SaveId` doesn't point to a save.
-    #[instrument(skip(self))]
+    #[cfg_attr(feature = "logging", instrument(skip(self)))]
     pub fn get_save_mut(
         &mut self,
         id: SaveId,
@@ -86,7 +87,7 @@ impl Playthrough {
     ///
     /// # Errors
     /// If a root `Save` already exists.
-    #[instrument]
+    #[cfg_attr(feature = "logging", instrument)]
     pub fn make_root_node(&mut self) -> Result<SaveId> {
         if self.root_save.is_some() {
             bail_log!("Root save already exists.");
@@ -101,7 +102,7 @@ impl Playthrough {
     /// # Errors
     /// If this `SaveId` doesn't point to a save.
     /// If this `SaveId` points to a deleted save.
-    #[instrument(skip(self))]
+    #[cfg_attr(feature = "logging", instrument(skip(self)))]
     pub fn fork_save(
         &mut self,
         parent_id: SaveId,
@@ -127,6 +128,7 @@ impl Playthrough {
     /// # Errors
     /// If this `SaveId` doesn't point to a save.
     /// If this `SaveId` points to a deleted save.
+    #[cfg_attr(feature = "logging", instrument(skip(self)))]
     pub fn delete_save(
         &mut self,
         id: SaveId,

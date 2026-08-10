@@ -2,3 +2,4 @@
 //! SPDX-FileCopyrightText: Stefan Rankovic <stefi.rankovic@proton.me>
 
 mod bail_log;
+mod tracing;

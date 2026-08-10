@@ -1,10 +1,9 @@
 //! SPDX-License-Identifier: GPL-3.0-or-later
 //! SPDX-FileCopyrightText: Stefan Rankovic <stefi.rankovic@proton.me>
 
-use crate::{bail_log, statics::LOG_FILES_DIR, structs::Logger};
+use crate::{bail_log, info, statics::LOG_FILES_DIR, structs::Logger};
 use color_eyre::eyre::Result;
 use std::fs::create_dir_all;
-use tracing::info;
 
 impl Logger {
     /// Create `LOGS_FILES_DIR` directory if it doesn't already exists.

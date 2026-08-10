@@ -14,7 +14,12 @@ readme = "../README.md"
 
 [features]
 default = ["logging"]
-logging = ["dep:tracing", "dep:tracing-error", "dep:tracing-subscriber"]
+logging = [
+  "dep:futures",
+  "dep:tracing",
+  "dep:tracing-error",
+  "dep:tracing-subscriber",
+]
 
 [dependencies]
 chrono.workspace = true
@@ -24,7 +29,7 @@ derive-new.workspace = true
 eframe.workspace = true
 egui.workspace = true
 egui-elegance.workspace = true
-futures.workspace = true
+futures = { workspace = true, optional = true }
 home.workspace = true
 indextree.workspace = true
 tokio.workspace = true

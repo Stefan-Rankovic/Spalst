@@ -3,6 +3,7 @@
 
 use crate::structs::{ScreenId, ScreenNode};
 use color_eyre::eyre::{OptionExt as _, Result};
+#[cfg(feature = "logging")]
 use tracing::instrument;
 
 /// The manager for values that implement `Screen`, screens.
@@ -51,7 +52,7 @@ impl ScreenManager {
     ///
     /// # Errors
     /// If it isn't valid. In other words, if it doesn't point to a `ScreenNode`.
-    #[instrument]
+    #[cfg_attr(feature = "logging", instrument)]
     pub(super) fn ensure_valid_id(
         &self,
         id: ScreenId,
