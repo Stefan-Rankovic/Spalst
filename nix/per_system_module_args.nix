@@ -74,6 +74,7 @@
                         commonCraneArgs
                         // {
                             CARGO_PROFILE = profile;
+                            RUSTFLAGS = "-Awarnings"; # Necessary as otherwise the dependencies aren't cached
                             cargoExtraArgs = featuresExtraArgs features;
                         }
                     );
