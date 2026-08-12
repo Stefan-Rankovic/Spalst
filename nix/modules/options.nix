@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: Stefan Rankovic <stefi.rankovic@proton.me>
 
 {
-    availableFeatures,
+    allFeatures,
     availableProfiles,
     defaultFeatures,
     defaultProfile,
@@ -24,7 +24,7 @@ in
                 };
 
                 features = mkOption {
-                    type = types.listOf (types.enum availableFeatures);
+                    type = types.listOf (types.enum allFeatures);
                     default = defaultFeatures;
                 };
             };

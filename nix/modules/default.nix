@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: Stefan Rankovic <stefi.rankovic@proton.me>
 
 {
-    availableFeatures,
+    allFeatures,
     availableProfiles,
     defaultFeatures,
     defaultProfile,
@@ -29,7 +29,7 @@
                 {
                     options.programs.spalst = import ./options.nix {
                         inherit
-                            availableFeatures
+                            allFeatures
                             availableProfiles
                             defaultFeatures
                             defaultProfile
